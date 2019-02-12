@@ -15,9 +15,8 @@ HighTechU Spring 2019 - Group Project
 3.	User Story 3
 -	As a user, I want a distraction-free webpage so that I can focus on the game more. 
 UI – Jonah   
-4.	Menu + Title Screen – Leo (apologies if I got this wrong, couldn’t read the handwriting)
-5.	Scoping out projects – Luci
-6.	Set up Twitter page - Jonah
+4.	Menu + Title Screen – Leo
+
 
 
 ### Design a wireframe for your project.
