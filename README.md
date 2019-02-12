@@ -8,7 +8,13 @@ HighTechU Spring 2019 - Group Project
 
 ### Mention the four user stories that your team has decided to work on.
 
-[Erase me and write your response here!]
+User Story 1
+As a user, I want a peaceful game so that I can relax during exam season. Art – Avery
+User Story 2
+As a user, I want to be able to keep track of high scores so that I can compete with myself to get better at the game. – Owen
+User Story 3
+As a user, I want a distraction-free webpage so that I can focus on the game more. UI – Jonah
+Menu + Title Screen – Leo (apologies if I got the name wrong, couldn’t read the handwriting)
 
 ### Design a wireframe for your project.
 
