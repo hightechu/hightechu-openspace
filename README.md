@@ -4,7 +4,7 @@ HighTechU Spring 2019 - Group Project
 
 ### Please write the problem statement of your project.
 
-[Erase me and write your response here!]
+Problem: Daily life for most people who play videogames is stressful and busy, and most readily-available popular videogames contain tension or stress-inducing elements. 
 
 ### Mention the four user stories that your team has decided to work on.
 
