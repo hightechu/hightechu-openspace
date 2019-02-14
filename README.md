@@ -23,5 +23,5 @@ UI – Jonah
 
 **Note** 
 
-* You are free to draw it on paper or use any computer application such as Balsamic.
-* Please create a seperate folder for this question. Name the folder 'wireframe' and then upload the file inside that folder.
+* You are free to draw it on paper or use any computer application such as Balsamic. - Used Inspiration 9 IE.
+* Please create a seperate folder for this question. Name the folder 'wireframe' and then upload the file inside that folder. - Done.
