@@ -1,0 +1,48 @@
+This document is for more in depth explaniations that are too long to comment... 
+
+# 1) What does beginPath() do ???
+
+beginPath() is a function that is used what drawing lines or shapes in js. it basicly tells js that we are done drawing something so we can begin drawing something else. that way not everything is connected in one big drawing instead of seperate ones. For more info on drawing on canavas visit 
+
+https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
+
+
+# 2) Handeling rotation in canvas
+
+This is the code block here 
+
+~~~~
+Context.context.save();
+Context.context.translate(x,y);
+Context.context.rotate(angle * this.TO_RADIANS);
+Context.context.drawImage(this.image,-(this.image.width/2),-(this.image.height/2));
+Context.context.restore();
+~~~~
+
+First of We grab the current state of the canvas with the save() function.
+
+
+To rotate the image itself. we do this by usign the built in variable angle. This is also where our helper variable TO_RADIANS comes in handy. The "angle" variable is in radians, but we can change that to degrees with the TO_RADIANS. There is a bunch of complicated math that goes along with that but i dont really understant it.
+
+To make sure it rotates around the center we pass 
+~~~~
+-(this.image.width/2)
+~~~~
+into the x and y repectively
+
+The last but not least we use .restore() to make sure we only rotate the one sprite and not everything on the canvas
+~~~~
+Context.context.restore() 
+~~~~
+
+![diagram](rotation.jpg)
+
+#3) time interval tick
+ 
+ This is the main gameplay loop and everything with in it will be updataed every 'x' times a second.
+
+~~~~
+setInterval(function() {
+
+}, x );
+~~~~
