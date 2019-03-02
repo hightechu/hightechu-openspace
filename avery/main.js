@@ -135,6 +135,7 @@ var player = function() {
 };
 
 
+
 //jquery (wait for all assets to load)
 $(document).ready(function() {
 
@@ -152,8 +153,6 @@ $(document).ready(function() {
     player = new player();
 
     loop = function() {
-
-        console.log("tick");
 
         if (controller.right) {
            player.x += player.spd;
@@ -177,6 +176,7 @@ $(document).ready(function() {
            Context.context.fillRect(0,0,800,800);
    
            //draw player
+
            spr_player.draw(player.x,player.y,player.width,player.height);
 
           // call update when the browser is ready to draw again

@@ -42,7 +42,11 @@ Context.context.restore()
  This is the main gameplay loop and everything within it will be updated every 'x' times a second.
 
 ~~~~
-setInterval(function() {
-
-}, x );
+ loop = function() {
+    //main game loop goes here.
+ }
 ~~~~
+
+This function asks the browser when the next update is and runs loop() 
+window.requestAnimationFrame(loop);
+ 
