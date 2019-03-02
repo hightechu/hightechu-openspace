@@ -96,6 +96,45 @@ var Sprite = function(filename, is_pattern) {
     
 };
 
+controller = {
+
+    left:false,
+    right:false,
+    up:false,
+    keyListener:function(event) {
+  
+      var key_state = (event.type == "keydown")?true:false;
+  
+      switch(event.keyCode) {
+  
+        case 37:// left key
+          controller.left = key_state;
+        break;
+        case 38:// up key
+          controller.up = key_state;
+        break;
+        case 39:// right key
+          controller.right = key_state;
+        break;
+  
+      }
+  
+    }
+  
+  };
+
+//create player object
+var player = function() { 
+    this.x = 320;
+    this.y = 400;
+    this.h = 32;
+    this.w = 32;
+    this.spd = 4;
+    this.hsp = 0;
+    this.vsp = 0;
+};
+
+
 //jquery (wait for all assets to load)
 $(document).ready(function() {
 
@@ -103,24 +142,50 @@ $(document).ready(function() {
     //links the canvas tag to the javascript file
     Context.create("canvas");    
 
+  
     // create variable for the player's sprite image
     var player_sprite = "Ship_V1.png";
 
     // create sprite with that image
     var spr_player = new Sprite(player_sprite,false);
 
-    // main loop
-    setInterval(function() {
+    player = new player();
 
-        //paint the background black
-        Context.context.fillStyle = "#000000";
-        Context.context.fillRect(0,0,800,800);
+    loop = function() {
 
-        //draw player
-        spr_player.draw(0,0,32,32);
+        console.log("tick");
 
+        if (controller.right) {
+           player.x += player.spd;
+
+        }
+
+        if (controller.left) {
+            player.x -= player.spd;
+        }
+        
+        // if the player goes out of the room loop backin
+        if (player.x < (0 - player.w/2)) {
+            player.x = (canvas.width + player.w/2)
+        } else if (player.x > (canvas.width + player.w/2)) {
+            player.x = (0 + player.w/2)
+        }
         
 
-    }, 25);
+           //paint the background black
+           Context.context.fillStyle = "#000000";
+           Context.context.fillRect(0,0,800,800);
    
+           //draw player
+           spr_player.draw(player.x,player.y,player.width,player.height);
+
+          // call update when the browser is ready to draw again
+        window.requestAnimationFrame(loop);
+    }
+
+window.addEventListener("keydown", controller.keyListener)
+window.addEventListener("keyup", controller.keyListener);
+window.requestAnimationFrame(loop);
+
+    
 });
