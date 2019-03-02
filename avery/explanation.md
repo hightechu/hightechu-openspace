@@ -35,7 +35,7 @@ The last but not least we use .restore() to make sure we only rotate the one spr
 Context.context.restore() 
 ~~~~
 
-![diagram](rotation.jpg)
+![diagram](https://i.stack.imgur.com/j2R0B.png)
 
 #3) time interval tick
  
