@@ -37,7 +37,7 @@ Context.context.restore()
 
 ![diagram](https://i.stack.imgur.com/j2R0B.png)
 
-#3) time interval tick
+# 3) time interval tick
  
  This is the main gameplay loop and everything with in it will be updataed every 'x' times a second.
 
