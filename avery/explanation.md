@@ -50,3 +50,5 @@ Context.context.restore()
 This function asks the browser when the next update is and runs loop() 
 window.requestAnimationFrame(loop);
  
+# 4) Collision 
+https://orion.math.iastate.edu/dept/links/formulas/form2.pdf

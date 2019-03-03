@@ -77,6 +77,8 @@ var Sprite = function(filename, is_pattern) {
             }            
         }
     };
+
+   
     
     // create a rotation function for the sprite
     this.rotate = function(x, y, angle)
@@ -96,6 +98,17 @@ var Sprite = function(filename, is_pattern) {
     
 };
 
+// mesure diestance to
+function distanceto(x1,y1,x2,y2) {
+    var sumx = (x2 - x1);
+    sumx = sumx * sumx
+    var sumy = (y2 - y1)
+    sumy = sumy * sumy
+    var dis = Math.sqrt(sumx + sumy)
+    return dis;
+};
+
+// Keyboard setup
 controller = {
 
     left:false,
@@ -124,41 +137,112 @@ controller = {
   };
 
 //create player object
-var player = function() { 
+var player = function() {
+    this.id = 0; 
     this.x = 320;
-    this.y = 400;
+    this.y =400;
     this.h = 32;
     this.w = 32;
     this.spd = 4;
     this.hsp = 0;
     this.vsp = 0;
+    this.collision_radius = this.h/2;
+    this.sprite = "Ship_V1.png";
+
 };
 
+var asteroid = function() {
+    this.id = null;
+    this.x = 0;
+    this.y = 0;
 
+    // asteroid height
+    this.h = 32;
+
+    // asteroid width
+    this.w = 32;
+    
+    // horizontal speed
+    this.hsp = 0;
+
+    //verical speed
+    this.vsp = 0;
+
+    // how close an object can get before it collides
+    this.collision_radius = this.h/2;
+
+    //this.asteroid_images = ["Asteroids_1.png","Asteroids_2.png","Asteroids_3.png"];
+    
+    //create angle
+    this.angle = Math.floor(Math.random() * 360);
+
+    
+}
+
+
+function create_astroid() {
+    var id = asteroids.length + 1;
+    var temp = new asteroid();
+    temp.id = id;
+    
+    var image_number = Math.floor(Math.random() * 3);
+    var spin = Math.floor(Math.random() * 3);
+    asteroid_sprites = ["Asteroid_1.png","Asteroid_2.png","Asteroid_3.png"];
+    temp.sprite = asteroid_sprites[image_number];
+
+
+    var _x = Math.floor(Math.random() * canvas.width);
+    var _y = -30;
+    temp.x = _x
+    temp.y = _y
+    asteroids.push(temp);
+    
+};
+
+Array.prototype.remove = function(from, to) {
+    var rest = this.slice((to || from) + 1 || this.length);
+    this.length = from < 0 ? this.length + from : from;
+    return this.push.apply(this, rest);
+};
 
 //jquery (wait for all assets to load)
 $(document).ready(function() {
 
-    //intialize
+
     //links the canvas tag to the javascript file
     Context.create("canvas");    
 
-  
-    // create variable for the player's sprite image
-    var player_sprite = "Ship_V1.png";
 
-    // create sprite with that image
-    var spr_player = new Sprite(player_sprite,false);
 
+    asteroids = [];
+    create_astroid()
+   
+    //creates a new player object
     player = new player();
 
-    loop = function() {
+    // create sprite with that image
+    var spr_player = new Sprite(player.sprite,false);
+    var spr_asteroid_1 = new Sprite("Asteroid_1.png",false);
+    var spr_asteroid_2 = new Sprite("Asteroid_2.png",false);
+    var spr_asteroid_3 = new Sprite("Asteroid_3.png",false)
+    //var spr_asteroid = new Sprite(gameobjects[0].sprite,false);
 
+    setInterval(function(){ 
+            create_astroid()
+            
+        }, 150);
+   
+
+    loop = function() {
+        
+        console.log(asteroids.length);
+        // if key right is pressed
         if (controller.right) {
            player.x += player.spd;
 
         }
 
+        // if key left is pressed
         if (controller.left) {
             player.x -= player.spd;
         }
@@ -176,8 +260,32 @@ $(document).ready(function() {
            Context.context.fillRect(0,0,800,800);
    
            //draw player
-
            spr_player.draw(player.x,player.y,player.width,player.height);
+           
+          //loop through asteroids
+        
+        for(var i = 1; i < asteroids.length; i++) {
+            
+            
+
+                asteroids[i].y += 4; 
+                if (asteroids[i].sprite == "Asteroid_1.png") spr_asteroid_1.rotate(asteroids[i].x,asteroids[i].y,asteroids[i].angle);
+                                                            
+
+                if (asteroids[i].sprite == "Asteroid_2.png")spr_asteroid_2.rotate(asteroids[i].x,asteroids[i].y,asteroids[i].angle);
+                                                           
+
+                if (asteroids[i].sprite == "Asteroid_3.png")spr_asteroid_3.rotate(asteroids[i].x,asteroids[i].y,asteroids[i].angle);
+                                                            
+
+
+                if (asteroids[i].y > 640) {
+                    asteroids.remove(i);
+                
+                }
+            
+        };
+
 
           // call update when the browser is ready to draw again
         window.requestAnimationFrame(loop);
