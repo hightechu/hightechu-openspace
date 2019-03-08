@@ -8,7 +8,7 @@ Problem: Daily life for most people who play videogames is stressful and busy, a
 
 ### Mention the four user stories that your team has decided to work on.
 
-### Please note that the roles assigned here have changed drastically since writing this.
+### Please note that the roles assigned here have changed drastically since writing this. -Jonah
 
 Here are the things we decided to start with this week:
 1.	User Story 1
