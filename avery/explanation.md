@@ -50,5 +50,35 @@ Context.context.restore()
 This function asks the browser when the next update is and runs loop() 
 window.requestAnimationFrame(loop);
  
-# 4) Collision 
+
+# 4 ) How to keep track of the asteroids
+In the game there are multiple asteroids but they all behave the same. So instead of creating multiple objects for each asteroid, I just created one object and made multiple instances of that object. I stored each instance in the array called asteroids[]. Then to create a new asteroid I use the function create_asteroid(). Which basicly does the following...
+~~~~
+function create_asteroid {
+
+   //create temporary variable to store the new object.
+   var asteroid = new asteroid();
+
+   //set some of the local variables within the object.
+
+   // then add the new asteroid to the asteroids array.
+   asteroids.push(asteroid);
+}
+~~~~
+This way we can manuplulate the data inside asteroids by using
+
+~~~~
+asteroids[id].variable
+~~~~
+
+This comes in handy later when we want to do something to all asteroids. all we have to do now is loop through all of them.
+```
+// for every asteroid
+For(var i = 0; i < asteroids.length; i++) {
+
+   //move every asteroid down at 4 pixels/frame;
+   asteroids[i].y += 4; 
+}
+```
+# 5) Collision 
 https://orion.math.iastate.edu/dept/links/formulas/form2.pdf
