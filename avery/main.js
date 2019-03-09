@@ -176,7 +176,7 @@ var player = function () {
     this.hsp = 0;
     this.vsp = 0;
     this.collision_radius = this.h / 2;
-    this.sprite = "Ship_V2.png";
+    this.sprite = "assets/Ship_V2.png";
 
 };
 
@@ -185,13 +185,10 @@ var asteroid = function () {
     this.x = 0;
     this.y = 0;
     this.h = 32;
+    this.w = 32;
     this.centx = this.x + this.w/2;
     this.centy = this.y + this.h/2;
-    this.w = 32;
-    this.hsp = 0;
-    this.vsp = 0;
     this.angle = Math.floor(Math.random() * 360);
-
 }
 
 function create_astroid() {
@@ -201,12 +198,14 @@ function create_astroid() {
 
     var image_number = Math.floor(Math.random() * 3);
     var spin = Math.floor(Math.random() * 3);
-    asteroid_sprites = ["Asteroid_1.png", "Asteroid_2.png", "Asteroid_3.png"];
+    asteroid_sprites = ["assets/Asteroid_V1.png", "assets/Asteroid_V2.png", "assets/Asteroid_V3.png"];
+
     temp.sprite = asteroid_sprites[image_number];
 
 
     var _x = Math.floor(Math.random() * canvas.width);
     var _y = -30;
+
     temp.x = _x
     temp.y = _y
     asteroids.push(temp);
@@ -222,11 +221,8 @@ Array.prototype.remove = function (from, to) {
 //jquery (wait for all assets to load)
 $(document).ready(function () {
 
-
     //links the canvas tag to the javascript file
     Context.create("canvas");
-
-
 
     asteroids = [];
     create_astroid()
@@ -236,9 +232,9 @@ $(document).ready(function () {
 
     // create sprite with that image
     var spr_player = new Sprite(player.sprite, false);
-    var spr_asteroid_1 = new Sprite("Asteroid_1.png", false);
-    var spr_asteroid_2 = new Sprite("Asteroid_2.png", false);
-    var spr_asteroid_3 = new Sprite("Asteroid_3.png", false)
+    var spr_asteroid_1 = new Sprite("assets/Asteroid_V1.png", false);
+    var spr_asteroid_2 = new Sprite("assets/Asteroid_V2.png", false);
+    var spr_asteroid_3 = new Sprite("assets/Asteroid_V3.png", false)
     //var spr_asteroid = new Sprite(gameobjects[0].sprite,false);
 
     setInterval(function () {
@@ -270,10 +266,12 @@ $(document).ready(function () {
         //paint the background black
         Context.context.fillStyle = "#000000";
         Context.context.fillRect(0, 0, 800, 800);
+        Context.context.restore();
 
         //draw player
-        spr_player.draw(player.x, player.y, player.width, player.height);
-
+        spr_player.rotate(player.x, player.y, player.width, player.height);
+        Context.context.fillStyle = "#FFFFFF";
+        Context.context.fillRect(player.x,player.y,1,1);
        // player.x + player.h/2, " : player x", player.y + player.h/2, " : player y");
 
         //loop through asteroids
@@ -289,23 +287,23 @@ $(document).ready(function () {
                     console.log("hit");
                 }
 
+                Context.context.strokeStyle = "#FFFFFF";
+                Context.context.fillRect(asteroids[i].x,asteroids[i].y,1,1);
+                Context.context.clearRect(asteroids[i].x,asteroids[i].y,1,1);
+                Context.context.strokeRect(asteroids[i].x,asteroids[i].y,1,1);
+
                 // draw the asteroids
-                if (asteroids[i].sprite == "Asteroid_1.png") spr_asteroid_1.rotate(asteroids[i].x, asteroids[i].y, asteroids[i].angle);
-                if (asteroids[i].sprite == "Asteroid_2.png") spr_asteroid_2.rotate(asteroids[i].x, asteroids[i].y, asteroids[i].angle);
-                if (asteroids[i].sprite == "Asteroid_3.png") spr_asteroid_3.rotate(asteroids[i].x, asteroids[i].y, asteroids[i].angle);
+                if (asteroids[i].sprite == "assets/Asteroid_V1.png") spr_asteroid_1.rotate(asteroids[i].x, asteroids[i].y, asteroids[i].angle);
+                if (asteroids[i].sprite == "assets/Asteroid_V2.png") spr_asteroid_2.rotate(asteroids[i].x, asteroids[i].y, asteroids[i].angle);
+                if (asteroids[i].sprite == "assets/Asteroid_V3.png") spr_asteroid_3.rotate(asteroids[i].x, asteroids[i].y, asteroids[i].angle);
                 
                 // if they fall ouside the map delete them form the array
                 if (asteroids[i].y > 640) {
                     asteroids.remove(i);
-
             }
         }
 
         }// end of for loop
-
-        // up date the center x and y values of the player.
-        player.centx = 
-        player.centy = 
 
         // call update when the browser is ready to draw again
         window.requestAnimationFrame(loop);
