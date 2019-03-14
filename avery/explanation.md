@@ -39,7 +39,7 @@ Context.context.restore()
 
 # 3) time interval tick
  
- This is the main gameplay loop and everything within it will be updated every 'x' times a second.
+ This is the main game play loop and everything within it will be updated every 'x' times a second.
 
 ~~~~
  loop = function() {
@@ -52,7 +52,7 @@ window.requestAnimationFrame(loop);
  
 
 # 4 ) How to keep track of the asteroids
-In the game there are multiple asteroids but they all behave the same. So instead of creating multiple objects for each asteroid, I just created one object and made multiple instances of that object. I stored each instance in the array called asteroids[]. Then to create a new asteroid I use the function create_asteroid(). Which basicly does the following...
+In the game there are multiple asteroids but they all behave the same. So instead of creating multiple objects for each asteroid, I just created one object and made multiple instances of that object. I stored each instance in the array called asteroids[]. Then to create a new asteroid I use the function create_asteroid(). Which basically does the following...
 ~~~~
 function create_asteroid {
 
@@ -65,7 +65,7 @@ function create_asteroid {
    asteroids.push(asteroid);
 }
 ~~~~
-This way we can manuplulate the data inside asteroids by using
+This way we can manipulate the data inside asteroids by using
 
 ~~~~
 asteroids[id].variable

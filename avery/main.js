@@ -93,46 +93,71 @@ var Sprite = function (filename, is_pattern) {
 
 };
 
-// mesure diestance to
-function distanceto(x1, y1, x2, y2) {
-    var sumx = (x2 - x1);
-    sumx = sumx * sumx
-    var sumy = (y2 - y1)
-    sumy = sumy * sumy
-    var dis = Math.sqrt(sumx + sumy)
-    return dis;
-};
+function hitBox( source, target ) {
+	/* Source and target objects contain x, y and width, height */
+	return !(
+		( ( source.y + source.height ) < ( target.y ) ) ||
+		( source.y > ( target.y + target.height ) ) ||
+		( ( source.x + source.width ) < target.x ) ||
+		( source.x > ( target.x + target.width ) )
+	);
+}
 
-function place_meeting_circle(r1, x1, y1, r2, x2, y2) {
-    var circle1 = {
-        radius: r1,
-        x: x1,
-        y: y2
-    };
-    var circle2 = {
-        radius: r2,
-        x: x2,
-        y: y2
-    };
-    var dx = circle1.x - circle2.x;
-    var dy = circle1.y - circle2.y;
-    var distance = Math.sqrt(dx * dx + dy * dy);
+function generateRenderMap( image, resolution ) {
+    var pixelMap = [];
     
-    if (distance < circle1.radius + circle2.radius) {
-        return 1;
-    }
+	for( var y = 0; y < image.width; y=y+resolution ) {
+		for( var x = 0; x < image.height; x=x+resolution ) {
+            // Fetch cluster of pixels at current position
+           // var dataObject = Context.context.createImageData(resolution,resolution);
+			var pixel = Context.context.getImageData(x, y,resolution,resolution );
+ 
+			// Check that opacity is above zero on the cluster
+			if( pixel.data[3] != 0 ) {
+				pixelMap.push( { x:x, y:y } );
+			}
+		}
+	}
+	return {
+		data: pixelMap,
+		resolution: resolution
+	};
 }
-
-function place_meeting(x1,y1,w1,h1,x2,y2,w2,h2) {
-var rect1 = {x: x1, y: y1, width: w1, height: h1}
-var rect2 = {x: x2, y: y2, width: w2, height: h2}
-
-if (rect1.x < rect2.x + rect2.width &&
-   rect1.x + rect1.width > rect2.x &&
-   rect1.y < rect2.y + rect2.height &&
-   rect1.y + rect1.height > rect2.y) {
-       return 1; 
-}
+ 
+/* Pixel collision detection pseudo code */
+function pixelHitTest( source, target ) {
+ 
+	// Source and target object contain two properties
+	// { data: a render-map, resolution: The precision of the render-map}
+ 
+	// Loop through all the pixels in the source image
+	for( var s = 0; s < source.pixelMap.data.length; s++ ) {
+		var sourcePixel = source.data.pixelMap[s];
+		// Add positioning offset
+		var sourceArea = {
+			x: sourcePixel.x + source.x,
+			y: sourcePixel.y + source.y,
+			width: target.pixelMap.resolution,
+			height: target.pixelMap.resolution
+		};
+ 
+		// Loop through all the pixels in the target image
+		for( var t = 0; t < target.pixelMap.data.length; t++ ) {
+			var targetPixel = target.pixelMap.data[t];
+			// Add positioning offset
+			var targetArea = {
+				x: targetPixel.x + target.x,
+				y: targetPixel.y + target.y,
+				width: target.pixelMap.resolution,
+				height: target.pixelMap.resolution
+			};
+ 
+			/* Use the earlier aforementioned hitbox function */
+			if( hitBox( sourceArea, targetArea ) ) {
+				return true;
+			}
+		}
+	}
 }
 
 // Keyboard setup
@@ -170,14 +195,9 @@ var player = function () {
     this.y = 400;
     this.h = 32;
     this.w = 32;
-    this.centx = this.x + this.w/2;
-    this.centy = this.y + this.h/2;
     this.spd = 4;
-    this.hsp = 0;
-    this.vsp = 0;
-    this.collision_radius = this.h / 2;
-    this.sprite = "assets/Ship_V2.png";
-
+    this.sprite =  new Sprite("assets/Ship_V2.png", false);
+    this.pixelMap = generateRenderMap(this.sprite.image,1);
 };
 
 var asteroid = function () {
@@ -186,28 +206,20 @@ var asteroid = function () {
     this.y = 0;
     this.h = 32;
     this.w = 32;
-    this.centx = this.x + this.w/2;
-    this.centy = this.y + this.h/2;
-    this.angle = Math.floor(Math.random() * 360);
+    this.sprite;
+    this.speed = 4;
 }
 
 function create_astroid() {
     var id = asteroids.length + 1;
     var temp = new asteroid();
     temp.id = id;
-
     var image_number = Math.floor(Math.random() * 3);
-    var spin = Math.floor(Math.random() * 3);
     asteroid_sprites = ["assets/Asteroid_V1.png", "assets/Asteroid_V2.png", "assets/Asteroid_V3.png"];
-
-    temp.sprite = asteroid_sprites[image_number];
-
-
-    var _x = Math.floor(Math.random() * canvas.width);
-    var _y = -30;
-
-    temp.x = _x
-    temp.y = _y
+    temp.sprite = new Sprite(asteroid_sprites[image_number],false);
+    var pixleMap = generateRenderMap(temp.sprite.image,1);
+    temp.x = Math.floor(Math.random() * canvas.width);
+    temp.y = -30;
     asteroids.push(temp);
 
 };
@@ -230,11 +242,6 @@ $(document).ready(function () {
     //creates a new player object
     player = new player();
 
-    // create sprite with that image
-    var spr_player = new Sprite(player.sprite, false);
-    var spr_asteroid_1 = new Sprite("assets/Asteroid_V1.png", false);
-    var spr_asteroid_2 = new Sprite("assets/Asteroid_V2.png", false);
-    var spr_asteroid_3 = new Sprite("assets/Asteroid_V3.png", false)
     //var spr_asteroid = new Sprite(gameobjects[0].sprite,false);
 
     setInterval(function () {
@@ -244,6 +251,8 @@ $(document).ready(function () {
 
 
     loop = function () {
+
+
         // if key right is pressed
         if (controller.right) {
             player.x += player.spd;
@@ -262,41 +271,34 @@ $(document).ready(function () {
             player.x = (0 + player.w / 2)
         }
 
-
         //paint the background black
         Context.context.fillStyle = "#000000";
         Context.context.fillRect(0, 0, 800, 800);
         Context.context.restore();
 
         //draw player
-        spr_player.rotate(player.x, player.y, player.width, player.height);
+        player.sprite.rotate(player.x, player.y,);
         Context.context.fillStyle = "#FFFFFF";
         Context.context.fillRect(player.x,player.y,1,1);
        // player.x + player.h/2, " : player x", player.y + player.h/2, " : player y");
+
+
 
         //loop through asteroids
         for (var i = 1; i < asteroids.length; i++) {
             // if the asteroids exsit then
             if (asteroids[i] != undefined) {
 
-                //move them downward
-                asteroids[i].y += 4;
-                
-                // if they collide with the player
-                if (place_meeting(player.centx,player.centy,player.w,player.h,asteroids[i].centx,asteroids[i].centy,asteroids[i].w,asteroids[i].h)) {
-                    console.log("hit");
-                }
+                pixelHitTest()
 
+                //move them downward
+                asteroids[i].y += asteroids[i].speed;
                 Context.context.strokeStyle = "#FFFFFF";
                 Context.context.fillRect(asteroids[i].x,asteroids[i].y,1,1);
                 Context.context.clearRect(asteroids[i].x,asteroids[i].y,1,1);
                 Context.context.strokeRect(asteroids[i].x,asteroids[i].y,1,1);
-
-                // draw the asteroids
-                if (asteroids[i].sprite == "assets/Asteroid_V1.png") spr_asteroid_1.rotate(asteroids[i].x, asteroids[i].y, asteroids[i].angle);
-                if (asteroids[i].sprite == "assets/Asteroid_V2.png") spr_asteroid_2.rotate(asteroids[i].x, asteroids[i].y, asteroids[i].angle);
-                if (asteroids[i].sprite == "assets/Asteroid_V3.png") spr_asteroid_3.rotate(asteroids[i].x, asteroids[i].y, asteroids[i].angle);
-                
+                asteroids[i].sprite.rotate(asteroids[i].x,asteroids[i].y);
+               
                 // if they fall ouside the map delete them form the array
                 if (asteroids[i].y > 640) {
                     asteroids.remove(i);
