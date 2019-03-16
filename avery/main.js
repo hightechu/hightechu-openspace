@@ -29,7 +29,6 @@ var Sprite = function (filename, is_pattern) {
     if (filename != undefined && filename != "" && filename != null) {
         //Creates the image object
         this.image = new Image();
-
         // Variable stores the image file path
         this.image.src = filename;
 
@@ -96,69 +95,22 @@ var Sprite = function (filename, is_pattern) {
 function hitBox( source, target ) {
 	/* Source and target objects contain x, y and width, height */
 	return !(
-		( ( source.y + source.height ) < ( target.y ) ) ||
-		( source.y > ( target.y + target.height ) ) ||
-		( ( source.x + source.width ) < target.x ) ||
-		( source.x > ( target.x + target.width ) )
+		( ( source.y + source.h) < ( target.y ) ) ||
+		( source.y > ( target.y + target.h) ) ||
+		( ( source.x + source.w ) < target.x ) ||
+		( source.x > ( target.x + target.w) )
 	);
 }
 
-function generateRenderMap( image, resolution ) {
-    var pixelMap = [];
-    
-	for( var y = 0; y < image.width; y=y+resolution ) {
-		for( var x = 0; x < image.height; x=x+resolution ) {
-            // Fetch cluster of pixels at current position
-           // var dataObject = Context.context.createImageData(resolution,resolution);
-			var pixel = Context.context.getImageData(x, y,resolution,resolution );
- 
-			// Check that opacity is above zero on the cluster
-			if( pixel.data[3] != 0 ) {
-				pixelMap.push( { x:x, y:y } );
-			}
-		}
-	}
-	return {
-		data: pixelMap,
-		resolution: resolution
-	};
-}
+
+function generateRenderMap( scr, resolution ) {
+
+};
  
 /* Pixel collision detection pseudo code */
 function pixelHitTest( source, target ) {
  
-	// Source and target object contain two properties
-	// { data: a render-map, resolution: The precision of the render-map}
- 
-	// Loop through all the pixels in the source image
-	for( var s = 0; s < source.pixelMap.data.length; s++ ) {
-		var sourcePixel = source.data.pixelMap[s];
-		// Add positioning offset
-		var sourceArea = {
-			x: sourcePixel.x + source.x,
-			y: sourcePixel.y + source.y,
-			width: target.pixelMap.resolution,
-			height: target.pixelMap.resolution
-		};
- 
-		// Loop through all the pixels in the target image
-		for( var t = 0; t < target.pixelMap.data.length; t++ ) {
-			var targetPixel = target.pixelMap.data[t];
-			// Add positioning offset
-			var targetArea = {
-				x: targetPixel.x + target.x,
-				y: targetPixel.y + target.y,
-				width: target.pixelMap.resolution,
-				height: target.pixelMap.resolution
-			};
- 
-			/* Use the earlier aforementioned hitbox function */
-			if( hitBox( sourceArea, targetArea ) ) {
-				return true;
-			}
-		}
-	}
-}
+};
 
 // Keyboard setup
 controller = {
@@ -217,7 +169,7 @@ function create_astroid() {
     var image_number = Math.floor(Math.random() * 3);
     asteroid_sprites = ["assets/Asteroid_V1.png", "assets/Asteroid_V2.png", "assets/Asteroid_V3.png"];
     temp.sprite = new Sprite(asteroid_sprites[image_number],false);
-    var pixleMap = generateRenderMap(temp.sprite.image,1);
+    //var pixleMap = generateRenderMap(temp.sprite.image,1);
     temp.x = Math.floor(Math.random() * canvas.width);
     temp.y = -30;
     asteroids.push(temp);
@@ -238,6 +190,7 @@ $(document).ready(function () {
 
     asteroids = [];
     create_astroid()
+
 
     //creates a new player object
     player = new player();
@@ -289,7 +242,9 @@ $(document).ready(function () {
             // if the asteroids exsit then
             if (asteroids[i] != undefined) {
 
-                pixelHitTest()
+                if (hitBox(asteroids[i],player)){
+                    window.alert("REE");
+               }
 
                 //move them downward
                 asteroids[i].y += asteroids[i].speed;
