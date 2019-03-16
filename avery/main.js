@@ -214,7 +214,6 @@ function create_asteroid() {
     temp.x = Math.floor(Math.random() * canvas.width);
     temp.y = -30;
     asteroids.push(temp);
-
 };
 
 function create_player() {
@@ -248,7 +247,6 @@ $(document).ready(function () {
 
 
     loop = function () {
-
 
         // if there isnt enough asteroids, create some 
         if  (asteroids.length < 20) {
