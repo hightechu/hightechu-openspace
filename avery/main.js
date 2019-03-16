@@ -102,15 +102,55 @@ function hitBox( source, target ) {
 	);
 }
 
-
-function generateRenderMap( scr, resolution ) {
-
-};
+function generateRenderMap( image, resolution ) {
+	var pixelMap = [];
+	for( var y = 0; y < image.width; y=y+resolution ) {
+		for( var x = 0; x < image.height; x=x+resolution ) {
+			// Fetch cluster of pixels at current position
+			var pixel = Context.context.getImageData( x, y, resolution, resolution );
  
-/* Pixel collision detection pseudo code */
+			// Check that opacity is above zero on the cluster
+			if( pixel.data[3] != 0 ) {
+				pixelMap.push( { x:x, y:y } );
+			}
+		}
+	}
+	return {
+		data: pixelMap,
+		resolution: resolution
+	};
+}
+
 function pixelHitTest( source, target ) {
+	// Loop through all the pixels in the source image
+	for( var s = 0; s < source.pixelMap.length; s++ ) {
+		var sourcePixel = source.pixelMap[s];
+		// Add positioning offset
+		var sourceArea = {
+			x: sourcePixel.x + source.x,
+			y: sourcePixel.y + source.y,
+			width: 1,
+			height: 1
+		};
  
-};
+		// Loop through all the pixels in the target image
+		for( var t = 0; t < target.pixelMap.length; t++ ) {
+			var targetPixel = target.pixelMap[t];
+			// Add positioning offset
+			var targetArea = {
+				x: targetPixel.x + target.x,
+				y: targetPixel.y + target.y,
+				width: 1,
+				height: 1
+			};
+ 
+			/* Use the earlier aforementioned hitbox function */
+			if( hitBox( sourceArea, targetArea ) ) {
+				return true;
+			}
+		}
+	}
+}
 
 // Keyboard setup
 controller = {
@@ -148,8 +188,8 @@ var player = function () {
     this.h = 32;
     this.w = 32;
     this.spd = 4;
-    this.sprite =  new Sprite("assets/Ship_V2.png", false);
-    this.pixelMap = generateRenderMap(this.sprite.image,1);
+    this.sprite = new Sprite("assets/Ship_V2.png", false);
+    this.pixelMap;
 };
 
 var asteroid = function () {
@@ -162,20 +202,29 @@ var asteroid = function () {
     this.speed = 4;
 }
 
-function create_astroid() {
+function create_asteroid() {
     var id = asteroids.length + 1;
     var temp = new asteroid();
     temp.id = id;
     var image_number = Math.floor(Math.random() * 3);
     asteroid_sprites = ["assets/Asteroid_V1.png", "assets/Asteroid_V2.png", "assets/Asteroid_V3.png"];
     temp.sprite = new Sprite(asteroid_sprites[image_number],false);
-    //var pixleMap = generateRenderMap(temp.sprite.image,1);
+    var pixleMap = generateRenderMap(temp.sprite.image,1);
+    console.log(pixleMap);
     temp.x = Math.floor(Math.random() * canvas.width);
     temp.y = -30;
     asteroids.push(temp);
 
 };
 
+function create_player() {
+    player = new player();
+    //console.log(player.sprite.image);
+    player.pixelMap = generateRenderMap(player.sprite.image,1);
+
+}
+
+//remove script
 Array.prototype.remove = function (from, to) {
     var rest = this.slice((to || from) + 1 || this.length);
     this.length = from < 0 ? this.length + from : from;
@@ -188,23 +237,23 @@ $(document).ready(function () {
     //links the canvas tag to the javascript file
     Context.create("canvas");
 
+    //array to store all the asteroids and thier variables
     asteroids = [];
-    create_astroid()
 
+    //creates a new asteroid
+    create_asteroid()
 
     //creates a new player object
-    player = new player();
-
-    //var spr_asteroid = new Sprite(gameobjects[0].sprite,false);
-
-    setInterval(function () {
-        create_astroid()
-
-    }, 150);
+    create_player();
 
 
     loop = function () {
 
+
+        // if there isnt enough asteroids, create some 
+        if  (asteroids.length < 20) {
+            create_asteroid();
+        }
 
         // if key right is pressed
         if (controller.right) {
@@ -242,8 +291,8 @@ $(document).ready(function () {
             // if the asteroids exsit then
             if (asteroids[i] != undefined) {
 
-                if (hitBox(asteroids[i],player)){
-                    window.alert("REE");
+                if (pixelHitTest(asteroids[i],player)){
+                     window.alert("REE");
                }
 
                 //move them downward
