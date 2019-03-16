@@ -246,7 +246,8 @@ $(document).ready(function () {
     //creates a new player object
     create_player();
 
-
+    // declare asteroidSpeed
+       var asteroidSpeed = 3; 
     loop = function () {
 
 
@@ -296,7 +297,7 @@ $(document).ready(function () {
                }
 
                 //move them downward
-                asteroids[i].y += asteroids[i].speed;
+                asteroids[i].y += asteroidSpeed;
                 Context.context.strokeStyle = "#FFFFFF";
                 Context.context.fillRect(asteroids[i].x,asteroids[i].y,1,1);
                 Context.context.clearRect(asteroids[i].x,asteroids[i].y,1,1);
@@ -319,5 +320,55 @@ $(document).ready(function () {
     window.addEventListener("keyup", controller.keyListener);
     window.requestAnimationFrame(loop);
 
+      // scoring stuff
+    
 
+
+
+      var score = 0;
+      // speeds up the asteroids when score is higher
+     setInterval(function() {
+       if (score>5000){
+           score = score + 12;
+           asteroidSpeed = 8.5;
+       }else if (score>4000){
+           score = score + 11;
+           asteroidSpeed = 8;
+       }else if (score>3000){
+           score = score + 10;
+          asteroidSpeed = 7.5;
+       }else if (score>2500){
+           score = score + 9;
+          asteroidSpeed = 7;
+       } else if (score>2000){
+           score = score + 8;
+            asteroidSpeed = 6.5;
+       }else if (score>1500){
+           score = score + 7;
+           asteroidSpeed = 6;
+       }else if (score>1000){
+           score = score + 6;
+           asteroidSpeed = 5.5;
+       }else if (score>750){
+           score = score + 5;
+           asteroidSpeed =5;
+       }else if (score>500){
+           score = score + 4;
+           asteroidSpeed = 4.5;
+       }else if (score>300){
+           score = score + 3;
+           asteroidSpeed = 4;
+       }else if (score>100){
+           // banner showing you reached next level
+           score = score + 2;
+           asteroidSpeed = 3.5;
+       }else{
+        score = score + 1;
+        
+       }
+      
+   
+       document.getElementById("score").innerHTML = score;
+   
+     }, 200);
 });
