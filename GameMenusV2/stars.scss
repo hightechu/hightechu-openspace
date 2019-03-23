@@ -1,0 +1,16 @@
+html,body {
+  background: rgb(0, 0, 0);
+  height: 100%;
+	margin: 0;
+  overflow: hidden;
+	padding: 0;
+  position: absolute;
+  width: 100%;
+  canvas {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 100ms ease;
+  }
+}
