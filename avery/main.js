@@ -12,7 +12,6 @@ var Context = {
 
 }
 
-
 // create sprite object and give is some draw functions
 var Sprite = function (filename, is_pattern) {
 
@@ -38,9 +37,10 @@ var Sprite = function (filename, is_pattern) {
         }
 
         // if the sprite is a pattern then
-        if (is_pattern)
+        if (is_pattern) {
             this.pattern = Context.context.createPattern(this.image, 'repeat');
-    } else
+        }
+    } else {
         // if the file has no name or doesnt exist print unable to load image
         console.log("Unable to load sprite.");
 
@@ -60,7 +60,6 @@ var Sprite = function (filename, is_pattern) {
 
             // if the width is value is not give, then use the sprites regular dimentions
             if (!w) {
-
                 Context.context.drawImage(this.image, x, y,
                     this.image.width,
                     this.image.height);
@@ -72,6 +71,7 @@ var Sprite = function (filename, is_pattern) {
             }
         }
     };
+}
 
 
 
@@ -103,21 +103,21 @@ function hitBox( source, target ) {
 }
 
 function generateRenderMap( image, resolution ) {
-	var pixelMap = [];
+    var pixelMap = [];
+    //console.log(image.width,image.height);
 	for( var y = 0; y < image.width; y=y+resolution ) {
 		for( var x = 0; x < image.height; x=x+resolution ) {
-			// Fetch cluster of pixels at current position
-			var pixel = Context.context.getImageData( x, y, resolution, resolution );
- 
-			// Check that opacity is above zero on the cluster
-			if( pixel.data[3] != 0 ) {
-				pixelMap.push( { x:x, y:y } );
+            var data = Context.context.getImageData(x,y,1,1).data[1];
+            if (data < 0) {
+
+            pixelMap.push( { x:x, y:y } );
+            }
+            
 			}
-		}
-	}
+        }
+        
 	return {
-		data: pixelMap,
-		resolution: resolution
+		pixelMap
 	};
 }
 
@@ -140,8 +140,8 @@ function pixelHitTest( source, target ) {
 			var targetArea = {
 				x: targetPixel.x + target.x,
 				y: targetPixel.y + target.y,
-				width: 1,
-				height: 1
+				w: 1,
+				h: 1
 			};
  
 			/* Use the earlier aforementioned hitbox function */
@@ -188,7 +188,7 @@ var player = function () {
     this.h = 32;
     this.w = 32;
     this.spd = 4;
-    this.sprite = new Sprite("assets/Ship_V2.png", false);
+    this.sprite;
     this.pixelMap;
 };
 
@@ -200,6 +200,7 @@ var asteroid = function () {
     this.w = 32;
     this.sprite;
     this.speed = 4;
+    this.pixleMap;
 }
 
 function create_asteroid() {
@@ -210,18 +211,20 @@ function create_asteroid() {
     asteroid_sprites = ["assets/Asteroid_V1.png", "assets/Asteroid_V2.png", "assets/Asteroid_V3.png"];
     temp.sprite = new Sprite(asteroid_sprites[image_number],false);
     var pixleMap = generateRenderMap(temp.sprite.image,1);
-    console.log(pixleMap);
     temp.x = Math.floor(Math.random() * canvas.width);
     temp.y = -30;
+    temp.pixleMap = pixleMap;
+   
     asteroids.push(temp);
-
 };
 
 function create_player() {
     player = new player();
-    //console.log(player.sprite.image);
-    player.pixelMap = generateRenderMap(player.sprite.image,1);
-
+    var spr = new Sprite("assets/Ship_V2.png", false);
+    var psmap = generateRenderMap(spr,1);
+    player.sprite = spr;
+    player.pixleMap = psmap;
+    //console.log(psmap.data);
 }
 
 //remove script
@@ -241,7 +244,7 @@ $(document).ready(function () {
     asteroids = [];
 
     //creates a new asteroid
-    create_asteroid()
+    create_asteroid();
 
     //creates a new player object
     create_player();
@@ -249,8 +252,7 @@ $(document).ready(function () {
     // declare asteroidSpeed
        var asteroidSpeed = 3; 
     loop = function () {
-
-
+        
         // if there isnt enough asteroids, create some 
         if  (asteroids.length < 20) {
             create_asteroid();
@@ -292,9 +294,10 @@ $(document).ready(function () {
             // if the asteroids exsit then
             if (asteroids[i] != undefined) {
 
-                if (pixelHitTest(asteroids[i],player)){
+        
+                if (pixelHitTest(player,asteroids[i])){
                      window.alert("REE");
-               }
+               };
 
                 //move them downward
                 asteroids[i].y += asteroidSpeed;
