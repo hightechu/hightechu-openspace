@@ -1,5 +1,4 @@
 var asteroidspeed = 4;
-
 var score = 0;
 
 //create context object to make using canvas easier
@@ -119,6 +118,8 @@ controller = {
     left: false,
     right: false,
     up: false,
+    down : false,
+
     keyListener: function (event) {
 
         var key_state = (event.type == "keydown") ? true : false;
@@ -134,9 +135,15 @@ controller = {
             case 39: // right key
                 controller.right = key_state;
                 break;
+
+            case 40 :
+                controller.down = key_state;
+            break;
+            
             case 82 :
             location.reload();
             break;
+
 
         }
 
@@ -208,7 +215,6 @@ Array.prototype.remove = function (from, to) {
 $(document).ready(function () {
 
     
-
     //links the canvas tag to the javascript file
     Context.create("canvas");
 
@@ -239,6 +245,15 @@ $(document).ready(function () {
         // if key left is pressed
         if (controller.left) {
             player.x -= player.spd;
+        }
+
+          // if key left is pressed
+          if (controller.up) {
+            player.y -= player.spd;
+        }
+          // if key left is pressed
+          if (controller.down) {
+            player.y += player.spd;
         }
 
         // if the player goes out of the room loop backin
