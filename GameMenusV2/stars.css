@@ -1,0 +1,20 @@
+html, body {
+  background: black;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 100%;
+  z-index: 500;
+}
+html canvas, body canvas {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 100ms ease;
+  z-index: 500;
+}
+
+/*# sourceMappingURL=stars.css.map */
