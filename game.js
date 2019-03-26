@@ -1,6 +1,9 @@
+
+// Declare variables (they are up here becuase they need to be global)
 var asteroidspeed = 4;
 var score = 0;
-
+var asteroids = [];  //array to store all the asteroids and thier variables
+var asteroidrate = 200;
 //create context object to make using canvas easier
 var Context = {
     //create some variables within the context object
@@ -16,68 +19,22 @@ var Context = {
 }
 
 // create sprite object and give is some draw functions
-var Sprite = function (filename, is_pattern) {
-
+var Sprite = function (filename) {
     // create image variable
     this.image = null;
-
-    // this variable is if the sprite is tile or background (yes/no)
-    this.pattern = null;
-
     // converts radians to degrees
     this.TO_RADIANS = Math.PI / 180;
-
     // this function is to test if the file exists and has a name
     if (filename != undefined && filename != "" && filename != null) {
         //Creates the image object
         this.image = new Image();
         // Variable stores the image file path
         this.image.src = filename;
-
-        //check if the image loaded     
-        this.image.onload = function (e) {
-            console.log("img loaded");
-        }
-
         // if the sprite is a pattern then
-        if (is_pattern) {
-            this.pattern = Context.context.createPattern(this.image, 'repeat');
-        }
-    } else {
-        // if the file has no name or doesnt exist print unable to load image
-        console.log("Unable to load sprite.");
-
-    // create a draw function for the sprite object
-    this.draw = function (x, y, w, h) {
-
-        // check if the sprite is a pattern 
-        if (this.pattern) {
-            //create fill style with image
-            Context.context.fillStyle = this.pattern;
-            //fill area (w,h) with the tiled image
-            Context.context.fillRect(x, y, w, h);
-
         } else {
-
-            // if its not a pattern then draw sprite normaly
-
-            // if the width is value is not give, then use the sprites regular dimentions
-            if (!w) {
-                Context.context.drawImage(this.image, x, y,
-                    this.image.width,
-                    this.image.height);
-            } else {
-
-                // if a w is set then strech the image to that value
-                Context.context.drawImage(this.image, x, y, w, h);
-
-            }
-        }
-    };
-}
-
-
-
+        // if the file has no name or doesnt exist print unable to load image
+        console.log("IMAGE UNABLE TO LOAD");
+    }
     // create a rotation function for the sprite
     this.rotate = function (x, y, angle) {
         // the next few lines are explained in explanation.md
@@ -87,23 +44,9 @@ var Sprite = function (filename, is_pattern) {
         Context.context.drawImage(this.image,
             -(this.image.width / 2),
             -(this.image.height / 2));
-
         Context.context.restore();
-        // ---------------------------------------------------
     };
-
-
 };
-
-function hitBox( source, target ) {
-	/* Source and target objects contain x, y and width, height */
-	return !(
-		( ( source.y + source.h) < ( target.y ) ) ||
-		( source.y > ( target.y + target.h) ) ||
-		( ( source.x + source.w ) < target.x ) ||
-		( source.x > ( target.x + target.w) )
-	);
-}
 
 function hitCicle (source, target){ 
     var d = source.h/2 + target.h/2;
@@ -135,14 +78,12 @@ controller = {
             case 39: // right key
                 controller.right = key_state;
                 break;
-
             case 40 :
                 controller.down = key_state;
-            break;
-            
+                break;
             case 82 :
             location.reload();
-            break;
+                break;
 
 
         }
@@ -158,6 +99,8 @@ var player = function () {
     this.y = 400;
     this.h = 32;
     this.w = 32;
+    this.hsp;
+    this.vsp;
     this.spd = 3.4;
     this.sprite;
 };
@@ -172,24 +115,13 @@ var asteroid = function () {
     this.speed = 2;
 }
 
-var explosion = function () {
-    this.x = player.x
-    this.y = player.y
-    this.sprite; 
-}
-
-function create_explosion() {
-    explosion = new explosion();
-    explosion.sprite = new Sprite("assets/explosion.gif", false);
-}
-
 function create_asteroid() {
     var id = asteroids.length + 1;
     var temp = new asteroid();
     temp.id = id;
     var image_number = Math.floor(Math.random() * 3);
     asteroid_sprites = ["assets/Asteroid_V1.png", "assets/Asteroid_V2.png", "assets/Asteroid_V3.png"];
-    temp.sprite = new Sprite(asteroid_sprites[image_number],false);
+    temp.sprite = new Sprite(asteroid_sprites[image_number]);
     temp.h = temp.sprite.image.height;
     temp.w = temp.sprite.image.width;
     temp.x = Math.floor(Math.random() * canvas.width);
@@ -200,8 +132,7 @@ function create_asteroid() {
 
 function create_player() {
     player = new player();
-    var spr = new Sprite("assets/Ship_V2.png", false);
-    player.sprite = spr;
+    player.sprite = new Sprite("assets/Ship_V2.png");;
 }
 
 //remove script
@@ -214,15 +145,8 @@ Array.prototype.remove = function (from, to) {
 //jquery (wait for all assets to load)
 $(document).ready(function () {
 
-    
     //links the canvas tag to the javascript file
     Context.create("canvas");
-
-    //array to store all the asteroids and thier variables
-    asteroids = [];
-
-    
-    var asteroidrate = 200;
 
     //creates a new asteroid
     create_asteroid();
@@ -236,33 +160,48 @@ $(document).ready(function () {
     }, asteroidrate);
 
     loop = function () {
+
         // if key right is pressed
         if (controller.right) {
-            player.x += player.spd;
-
+            player.hsp = player.spd;
         }
 
         // if key left is pressed
         if (controller.left) {
-            player.x -= player.spd;
+            player.hsp = -player.spd;
         }
 
           // if key left is pressed
           if (controller.up) {
-            player.y -= player.spd;
+            player.vsp = -player.spd;
         }
           // if key left is pressed
           if (controller.down) {
-            player.y += player.spd;
+            player.vsp = player.spd;
         }
+
+        if (controller.down == false && controller.up == false) {
+            player.vsp = 0;
+        } 
+        
+        if (controller.left == false && controller.right == false) {
+            player.hsp = 0;
+        }
+
+        player.y += player.vsp;
+        player.x += player.hsp; 
+        
 
         // if the player goes out of the room loop backin
         if (player.x < (0 - player.w / 2)) {
             player.x = (canvas.width + player.w / 2)
         } else if (player.x > (canvas.width + player.w / 2)) {
-            player.x = (0 + player.w / 2)
+            player.x = (0 - player.w / 2)
         }
 
+
+        // prevent the player from exiting the canvas
+       
         //paint the background black
         Context.context.fillStyle = "#000000";
         Context.context.fillRect(0, 0, 800, 800);
@@ -278,7 +217,6 @@ $(document).ready(function () {
 
                 if (hitCicle(asteroids[i],player)) {
                     player.spd = 0;
-                    player.sprite = new Sprite("assets/whitecircle.png",false);
                     window.location.href = "Highscore.html";
                 }
                 
