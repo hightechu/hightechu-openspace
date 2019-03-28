@@ -11,4 +11,8 @@ body {
     background-color :black;
 }
 
-
+div {
+    font-family: 'Muli', sans-serif;
+    color: #FFF;
+    opacity: 0.6;
+}
