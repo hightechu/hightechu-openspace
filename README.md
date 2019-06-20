@@ -1,29 +1,41 @@
-# HighTechU Group Project 
+# Open Space
 
-HighTechU Spring 2019 - Group Project
+**2019 HighTechU Academy - Cohort 1**
 
-### Please write the problem statement of your project.
+## Website
+
+https://hightechu.github.io/hightechu-2019-academy-cohort-1-openspace/
+
+## Problem Statement
 
 Problem: Daily life for most people who play videogames is stressful and busy, and most readily-available popular videogames contain tension or stress-inducing elements.
 
-### Mention the four user stories that your team has decided to work on.
+## User Stories
 
-### Please note that the roles assigned here have changed drastically since writing this. -Jonah
+* As a user, I want a peaceful game so that I can relax during exam season.
+* As a user, I want to be able to keep track of high scores so that I can compete with myself to get better at the game.
+* As a user, I want a distraction-free webpage so that I can focus on the game more.
 
-Here are the things we decided to start with this week:
-1.	User Story 1
--	As a user, I want a peaceful game so that I can relax during exam season. Art – Avery
-2.	User Story 2
--	As a user, I want to be able to keep track of high scores so that I can compete with myself to get better at the game. – Owen 
-3.	User Story 3
--	As a user, I want a distraction-free webpage so that I can focus on the game more. UI – Jonah  
+## Promo
 
-4.	Menu + Title Screen – Leo (apologies if I got the name wrong, couldn’t read the handwriting)
+![Promo of Website](promo.png)
 
+![Promo of Website](promo-1.png)
 
-### Design a wireframe for your project.
+![Promo of Website](promo-2.png)
 
-**Note** 
+![Promo of Website](promo-3.png)
 
-* You are free to draw it on paper or use any computer application such as Balsamic.
-* Please create a seperate folder for this question. Name the folder 'wireframe' and then upload the file inside that folder.
+## Made with:
+
+* HTML
+* CSS
+* JS
+
+## Made by:
+
+* Avery
+* Leo
+* Luci
+* Jonah
+* Owen
