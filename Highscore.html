@@ -1,74 +1,62 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <STYLE>
-        A {
-            text-decoration: none;
-        }
-    </STYLE>
+        <style>A {text-decoration: none;} </style>
     <link rel="stylesheet" href="https://fonts.google.com/specimen/Muli?selection.family=Muli:400,800">
-    <link rel="stylesheet" type="text/css" href="stars.css" />
-    <link rel="stylesheet" type="text/css" href="main.css" />
-    <link rel="stylesheet" type="text/css" href="button.css" />
-    <title>Open Space</title>
+    <link rel="stylesheet" type="text/css" href="stars.css"/>
+    <link rel="stylesheet" type="text/css" href="main.css"/>
+    <link rel="stylesheet" type="text/css" href="button.css"/>
+    <link rel="stylesheet" type="text/css" href="Options.css"/>
+
+<title>Open Space</title>
 </head>
+<body link="#ffffff" vlink="#ffffff" alink="#ffffff"> 
 
-<body link="#ffffff" vlink="#ffffff" alink="#ffffff">
-
-
+    
     <br>
     <br>
     <br>
     <br>
     <br>
+
+<div class="menubox">
+
+    <br>
+    <br>
+
+    <h2>GAME OVER.</h2>
+
+    <br>
+
+        <h3 class = "pause-text", style="color: white">You achieved a score of ________. </h2>
+        <h3 class = "pause-text", style="color: white">Type your name below to submit your score!</h2>
+
+    <br>
+
+        <input type = "text" class = "menutext" maxlength = "6"/> 
+   
     <br>
     <br>
     <br>
 
-    <div class="menubox">
-
-        <br>
-        <br>
-        <br>
-
-        <h2>GAME END.</h2>
-
-        <br>
-        <br>
-
-        <h3 class="pause-text" , style="color: white">You achieved a score of: <br> ________ </h2>
-            <h3 class="pause-text" , style="color: white">Type your name to save your score</p>
-
-                <br>
-                <br>
-
-                <input type="text" class="menutext" maxlength="6" />
-
-                <br>
-                <br>
-                <br>
-                <br>
-
-                <div class="button">
-                    <a href="index.html">
-                        <span class="button__mask"></span>
-                        <span class="button__text">Submit to title</span>
-                        <span class="button__text button__text--bis">Submit to title</span>
-                    </a>
-                </div>
-
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-
-
+    <div onclick="playAudio(activate)" onmouseenter="playAudio(hover)" class="button">
+        <a href="index.html">
+        <span class="button__mask"></span>
+        <span class="button__text">Submit to title</span>
+        <span class="button__text button__text--bis">Submit to title</span>
+        </a>
     </div>
 
+    <br>
+    <br>
+    <br>
+    <br>
+
+</div>
+    <script type="text/javascript" src="game.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="stars.js"></script>
+    <script src="main.js"></script>
 </body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="stars.js"></script>
 
 </html>
