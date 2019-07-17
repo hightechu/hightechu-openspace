@@ -4,7 +4,7 @@
 
 ## Website
 
-https://hightechu.github.io/hightechu-2019-academy-cohort-1-openspace/
+https://hightechu.github.io/hightechu-academy-openspace/
 
 ## Problem Statement
 
