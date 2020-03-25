@@ -18,13 +18,13 @@ Problem: Daily life for most people who play videogames is stressful and busy, a
 
 ## Promo
 
-![Promo of Website](promo.png)
+![Promo of Website](img/promo.png)
 
-![Promo of Website](promo-1.png)
+![Promo of Website](img/promo-1.png)
 
-![Promo of Website](promo-2.png)
+![Promo of Website](img/promo-2.png)
 
-![Promo of Website](promo-3.png)
+![Promo of Website](img/promo-3.png)
 
 ## Made with:
 
