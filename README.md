@@ -4,7 +4,7 @@
 
 ## Website
 
-https://hightechu.github.io/hightechu-academy-openspace/
+[Live Demo](https://hightechu.github.io/hightechu-academy-openspace/app)
 
 ## Problem Statement
 
