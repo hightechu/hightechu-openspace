@@ -1,6 +1,9 @@
 # Open Space
 
-#### Open Space is an arcade game currently in development to deploy as a browser and mobile game. Stay posted for updates!
+![badge](https://img.shields.io/badge/Status-In_Development-red)
+![licence](https://img.shields.io/badge/Licence-MIT-green)
+
+#### Open Space is an arcade game currently in development to deploy as a browser and mobile game.
 
 ### How to launch locally
 1. Download or clone the repository
