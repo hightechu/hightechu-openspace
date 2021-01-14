@@ -24,10 +24,10 @@ export class GameplayPage implements OnInit {
         width: 800,
         height: 600,
         type: Phaser.AUTO,
-        /*scale: {
-          mode: Phaser.Scale.RESIZE,
+        scale: {
+          /*mode: Phaser.Scale.RESIZE,*/
           autoCenter: Phaser.Scale.CENTER_BOTH
-        },*/
+        },
         parent: 'phaser',
         /*dom: {
           createContainer: true
@@ -35,7 +35,14 @@ export class GameplayPage implements OnInit {
         scene: [ GameScene ],
         fps: {
           forceSetTimeOut: true
-        }
+        },
+        physics: {
+          default: 'arcade',
+          arcade: {
+              gravity: { y: 300 },
+              debug: false
+          }
+      }
       });
       this.gameInstance.gameInstanceService = this;
     } // if
