@@ -1,0 +1,24 @@
+ion-content {
+    --background: #000000;
+}
+
+ion-button {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    top: 60vh;
+    left: 50vw;
+    width: 200px;
+    height: 50px;
+    border: #FFFFFF 4px solid;
+    --color: white;
+    --background: #000000;
+    --border-radius: 0px;
+    --background-activated: #FFFFFF;
+  }
+
+  ion-img {
+      position: fixed;
+      transform: translate(-50%, -50%);
+      top: 40vh;
+      left: 50vw;
+  } 
