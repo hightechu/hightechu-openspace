@@ -1,7 +1,29 @@
 <ion-content>
-    <ion-img src="..\..\assets\OldOpenSpaceLogo.png"></ion-img>
 
-    <ion-button strong=true [routerLink]="['/', 'title-screen', 'gameplay']">Start Game</ion-button>
+    <ion-grid fixed=true>
+        <ion-row>
+            <ion-col size="12">
+                <ion-img src="..\..\assets\OldOpenSpaceLogo.png"></ion-img>
+            </ion-col>
+        </ion-row>
+        
+        <br>
+        <br>
+        
+        <ion-row>
+            <ion-col>
+                <ion-button id="start" strong=true [routerLink]="['/', 'title-screen', 'gameplay']">Start Game</ion-button>
+            </ion-col>
+        </ion-row>
+        
+        <br>
+
+        <ion-row>
+            <ion-col>
+                <ion-button id="options" strong=true>Options</ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 
 <!-- <app-game-screen></app-game-screen> -->
 
