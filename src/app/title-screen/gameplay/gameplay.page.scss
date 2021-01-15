@@ -2,6 +2,16 @@ ion-content {
     --background: #33f2b9;
 }
 
+ion-button {
+    width: 200px;
+    height: 50px;
+    border: #FFFFFF 4px solid;
+    --color: white;
+    --background: #000000;
+    --border-radius: 0px;
+    --background-activated: #FFFFFF;
+}
+
 #phaser {
     margin-top: 100px;
     padding: 0px;

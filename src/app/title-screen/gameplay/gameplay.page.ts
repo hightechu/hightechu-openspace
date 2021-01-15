@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
+import { GameDataService } from '../../game-data.service';
 
 import { GameScene } from './gamescene'; 
 
@@ -15,7 +16,7 @@ export class GameplayPage implements OnInit {
   game: Phaser.Game; // phaser game instance
   config: Phaser.Types.Core.GameConfig; // phaser configuration object
 
-  constructor() {
+  constructor(protected dataService: GameDataService) {
 }
 
   ngOnInit() {
@@ -46,6 +47,8 @@ export class GameplayPage implements OnInit {
       });
       this.gameInstance.gameInstanceService = this;
     } // if
+
+    console.log(this.dataService.alive + " page.ts")
   } // ngOnInit
 
 } // end of class "GameplayPage"

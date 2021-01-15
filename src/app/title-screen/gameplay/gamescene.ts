@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
-import { GameplayPage } from './gameplay.page'; 
+//import { GameplayPage } from './gameplay.page'; 
+import { GameDataService } from '../../game-data.service'; 
+//import { title } from 'process';
 
 export class GameScene extends Phaser.Scene {
 
@@ -9,24 +11,24 @@ export class GameScene extends Phaser.Scene {
     healthBar;
     asteroids;  
       
-    constructor() {
+    constructor(protected dataService: GameDataService) {
         super({
           key: "GameScene"
         });
     }
     init(params): void {
-        // TODO
+       
     }
     preload(): void {
         this.load.image('stars', '../../../assets/backgrounds/starmapBig.png'); 
-        this.load.image('ship', '../../../assets/backgrounds/ship.png');
-        this.load.image('asteroid', '../../../assets/backgrounds/asteroid.png'); 
-        /*
-        this.load.spritesheet('ship', '../../../assets/backgrounds/ship.png',{ 
-          frameWidth: 32, 
-          frameHeight: 48
+        //this.load.image('ship', '../../../assets/backgrounds/ship.png');
+        this.load.image('asteroid', '../../../assets/backgrounds/asteroid2.png'); 
+        
+        this.load.spritesheet('ship', '../../../assets/backgrounds/shipSheet2.png',{ 
+          frameWidth: 64, 
+          frameHeight: 96
          }); 
-         */
+         
     } // preload function
       
     create(): void {
@@ -38,9 +40,22 @@ export class GameScene extends Phaser.Scene {
         this.starmap = this.add.tileSprite(0, 0, width, height, 'stars').setOrigin(0, 0); 
 
         // player
-        this.ship = this.physics.add.sprite(350, 500, 'ship').setScale(0.2);
+        this.ship = this.physics.add.sprite(350, 550, 'ship').setScale(1);
         this.ship.setCollideWorldBounds(true);
-        this.ship.health = 100; 
+        this.ship.health = 100;
+        // player animations
+        this.anims.create({
+          key: 'straight',
+          frames: this.anims.generateFrameNumbers('ship', { start: 3, end: 5 }),
+          frameRate: 10,
+          repeat: -1
+        });
+        this.anims.create({
+          key: 'move',
+          frames: this.anims.generateFrameNumbers('ship', { start: 2, end: 5 }),
+          frameRate: 10,
+          repeat: -1
+        });
 
         //healthBar
         this.healthBar = this.makeBar(20, 20, 0xFF0000);
@@ -53,6 +68,8 @@ export class GameScene extends Phaser.Scene {
           asteroid.destroy(); 
         }, null, this);
 
+
+        console.log(this.dataService.alive); 
     }
 
     update(time): void {
@@ -64,14 +81,26 @@ export class GameScene extends Phaser.Scene {
         // player controls
         if (cursors.left.isDown) {
           this.ship.setVelocityX(-160);
+          this.ship.setAccelerationX(-150);
+
+          //animation
+          this.ship.anims.play('move', true);
           
           //this.ship.anims.play('left', true);
         } else if (cursors.right.isDown) {
           this.ship.setVelocityX(160);
+          this.ship.setAccelerationX(150);
+
+          //animation
+          this.ship.anims.play('move', true);
 
           //this.ship.anims.play('right', true);
         } else {
           this.ship.setVelocityX(0);
+          this.ship.setAccelerationX(0);
+
+          //animation
+          this.ship.anims.play('straight', true);
         } // if/else if
 
         if (time % 1000 <= 10) {
@@ -107,12 +136,14 @@ export class GameScene extends Phaser.Scene {
   // creates and asteroid in the group "asteroids" at a random x, and set it falling toward the bottom of the screen. 
   makeAsteroid() {
     let x = Math.floor(Math.random() * this.scale.width) + 1 
-    const asteroid = this.asteroids.create(x, 16, 'asteroid').setScale(0.3); 
+    let scale = (Math.floor(Math.random() * 100) + 50) / 100; 
+    const asteroid = this.asteroids.create(x, 16, 'asteroid').setScale(scale); 
     asteroid.setVelocityY(160);
   } // makeAsteroid
 
   levelFailed() {
-    this.scene.pause(); 
+    this.scene.pause();
+    //this.dataService.alive = false; 
   }
 
 
