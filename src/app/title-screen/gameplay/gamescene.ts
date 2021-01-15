@@ -6,7 +6,8 @@ export class GameScene extends Phaser.Scene {
     gameplay: Phaser.Game; 
     starmap;
     ship; 
-    healthBar; 
+    healthBar;
+    asteroids;  
       
     constructor() {
         super({
@@ -18,7 +19,8 @@ export class GameScene extends Phaser.Scene {
     }
     preload(): void {
         this.load.image('stars', '../../../assets/backgrounds/starmapBig.png'); 
-        this.load.image('ship', '../../../assets/backgrounds/ship.png'); 
+        this.load.image('ship', '../../../assets/backgrounds/ship.png');
+        this.load.image('asteroid', '../../../assets/backgrounds/asteroid.png'); 
         /*
         this.load.spritesheet('ship', '../../../assets/backgrounds/ship.png',{ 
           frameWidth: 32, 
@@ -42,7 +44,14 @@ export class GameScene extends Phaser.Scene {
 
         //healthBar
         this.healthBar = this.makeBar(20, 20, 0xFF0000);
-        this.healthBar.scaleX = 1; 
+        this.healthBar.scaleX = 1;
+        
+        // asteroids group (start's empty)
+        this.asteroids = this.physics.add.group();
+        this.physics.add.collider(this.ship, this.asteroids, function (player, asteroid) {
+          this.healthBar.scaleX = this.healthBar.scaleX-0.2; 
+          asteroid.destroy(); 
+        }, null, this);
 
     }
 
@@ -63,8 +72,15 @@ export class GameScene extends Phaser.Scene {
           //this.ship.anims.play('right', true);
         } else {
           this.ship.setVelocityX(0);
-          
         } // if/else if
+
+        if (time % 1000 <= 10) {
+          this.makeAsteroid();  
+        }
+
+        if (this.healthBar.scaleX <= 0.1) {
+          this.levelFailed(); 
+        }
  
 
     } // update function
@@ -87,6 +103,17 @@ export class GameScene extends Phaser.Scene {
       //return the bar
       return bar;
   } // makeBar
+
+  // creates and asteroid in the group "asteroids" at a random x, and set it falling toward the bottom of the screen. 
+  makeAsteroid() {
+    let x = Math.floor(Math.random() * this.scale.width) + 1 
+    const asteroid = this.asteroids.create(x, 16, 'asteroid').setScale(0.3); 
+    asteroid.setVelocityY(160);
+  } // makeAsteroid
+
+  levelFailed() {
+    this.scene.pause(); 
+  }
 
 
   

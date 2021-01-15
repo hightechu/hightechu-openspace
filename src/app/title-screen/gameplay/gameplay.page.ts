@@ -39,7 +39,7 @@ export class GameplayPage implements OnInit {
         physics: {
           default: 'arcade',
           arcade: {
-              gravity: { y: 300 },
+              //gravity: { y: 300 },
               debug: false
           }
       }
