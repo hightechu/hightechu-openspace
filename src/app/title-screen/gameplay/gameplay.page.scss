@@ -1,9 +1,10 @@
 ion-content {
-    --background: #33f2b9;
+    --background: var(--ion-color-dark);
+    text-align: center;
 }
 
 ion-button {
-    width: 200px;
+    width: 300px;
     height: 50px;
     border: #FFFFFF 4px solid;
     --color: white;
@@ -15,5 +16,5 @@ ion-button {
 #phaser {
     margin-top: 100px;
     padding: 0px;
-    border: #FFFFFF 4px solid;
+    //border: #FFFFFF 4px solid;
 }

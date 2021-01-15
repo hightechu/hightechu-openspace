@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { LocatorService } from 'src/app/locator.service';
 //import { GameplayPage } from './gameplay.page'; 
 import { GameDataService } from '../../game-data.service'; 
 //import { title } from 'process';
@@ -6,21 +7,26 @@ import { GameDataService } from '../../game-data.service';
 export class GameScene extends Phaser.Scene {
 
     gameplay: Phaser.Game; 
-    starmap;
+    starmap1;
+    starmap2;
     ship; 
     healthBar;
     asteroids;  
-      
-    constructor(protected dataService: GameDataService) {
+    
+    dataService: GameDataService = LocatorService.injector.get(GameDataService);
+
+    constructor() {
         super({
           key: "GameScene"
         });
     }
+
     init(params): void {
        
     }
     preload(): void {
-        this.load.image('stars', '../../../assets/backgrounds/starmapBig.png'); 
+        this.load.image('stars1', '../../../assets/backgrounds/stars1.png'); 
+        this.load.image('stars2', '../../../assets/backgrounds/stars2.gif');
         //this.load.image('ship', '../../../assets/backgrounds/ship.png');
         this.load.image('asteroid', '../../../assets/backgrounds/asteroid2.png'); 
         
@@ -28,6 +34,9 @@ export class GameScene extends Phaser.Scene {
           frameWidth: 64, 
           frameHeight: 96
          }); 
+
+         // health bar
+         //this.load.image('health', '../../../assets/backgrounds/healthBar.png'); 
          
     } // preload function
       
@@ -37,7 +46,8 @@ export class GameScene extends Phaser.Scene {
         const width = this.scale.width;
         const height = this.scale.height; 
         // backgrounds
-        this.starmap = this.add.tileSprite(0, 0, width, height, 'stars').setOrigin(0, 0); 
+        this.starmap1 = this.add.tileSprite(0, 0, width, height, 'stars1').setOrigin(0, 0);
+        this.starmap2 = this.add.tileSprite(0, 0, width*2, height*2, 'stars2').setOrigin(0, 0).setScale(0.5);  
 
         // player
         this.ship = this.physics.add.sprite(350, 550, 'ship').setScale(1);
@@ -69,19 +79,21 @@ export class GameScene extends Phaser.Scene {
         }, null, this);
 
 
-        console.log(this.dataService.alive); 
     }
 
     update(time): void {
         const cursors = this.input.keyboard.createCursorKeys();
 
         // scrollbackground
-        this.starmap.tilePositionY -= 1; 
-        //this.starmap.tilePosition
+        this.starmap1.tilePositionY -= 1;
+        this.starmap2.tilePositionY -= 3;
+
+        //acceleration
+        this.ship.setAccelerationX(150);
+
         // player controls
         if (cursors.left.isDown) {
           this.ship.setVelocityX(-160);
-          this.ship.setAccelerationX(-150);
 
           //animation
           this.ship.anims.play('move', true);
@@ -89,7 +101,6 @@ export class GameScene extends Phaser.Scene {
           //this.ship.anims.play('left', true);
         } else if (cursors.right.isDown) {
           this.ship.setVelocityX(160);
-          this.ship.setAccelerationX(150);
 
           //animation
           this.ship.anims.play('move', true);
@@ -97,13 +108,12 @@ export class GameScene extends Phaser.Scene {
           //this.ship.anims.play('right', true);
         } else {
           this.ship.setVelocityX(0);
-          this.ship.setAccelerationX(0);
 
           //animation
           this.ship.anims.play('straight', true);
         } // if/else if
 
-        if (time % 1000 <= 10) {
+        if (time % 1000 <= 10 || (time % 1000 >= 495 && time % 1000 <= 505)) {
           this.makeAsteroid();  
         }
 
@@ -137,13 +147,14 @@ export class GameScene extends Phaser.Scene {
   makeAsteroid() {
     let x = Math.floor(Math.random() * this.scale.width) + 1 
     let scale = (Math.floor(Math.random() * 100) + 50) / 100; 
-    const asteroid = this.asteroids.create(x, 16, 'asteroid').setScale(scale); 
-    asteroid.setVelocityY(160);
+    let speed = (Math.floor(Math.random() * 250) + 120);
+    const asteroid = this.asteroids.create(x, -16, 'asteroid').setScale(scale); 
+    asteroid.setVelocityY(speed);
   } // makeAsteroid
 
   levelFailed() {
     this.scene.pause();
-    //this.dataService.alive = false; 
+    this.dataService.alive = false; 
   }
 
 
