@@ -11,7 +11,8 @@ export class GameScene extends Phaser.Scene {
     starmap2;
     ship; 
     healthBar;
-    asteroids;  
+    asteroids;
+    shipLaser;  
     
     dataService: GameDataService = LocatorService.injector.get(GameDataService);
 
@@ -25,12 +26,13 @@ export class GameScene extends Phaser.Scene {
        
     }
     preload(): void {
-        this.load.image('stars1', '../../../assets/backgrounds/stars1.png'); 
-        this.load.image('stars2', '../../../assets/backgrounds/stars2.gif');
-        //this.load.image('ship', '../../../assets/backgrounds/ship.png');
-        this.load.image('asteroid', '../../../assets/backgrounds/asteroid2.png'); 
+        this.load.image('stars1', '../../../assets/sprites/stars1.png'); 
+        this.load.image('stars2', '../../../assets/sprites/stars2.gif');
+        this.load.image('bigAsteroid', '../../../assets/sprites/asteroid1.png'); 
+        this.load.image('smallAsteroid', '../../../assets/sprites/asteroid2.png');
+        this.load.image('shipLaser', '../../../assets/sprites/shipLaser.png');  
         
-        this.load.spritesheet('ship', '../../../assets/backgrounds/shipSheet2.png',{ 
+        this.load.spritesheet('ship', '../../../assets/backgrounds/shipSheet1.png',{ 
           frameWidth: 64, 
           frameHeight: 96
          }); 
@@ -52,17 +54,17 @@ export class GameScene extends Phaser.Scene {
         // player
         this.ship = this.physics.add.sprite(350, 550, 'ship').setScale(1);
         this.ship.setCollideWorldBounds(true);
-        this.ship.health = 100;
+        this.ship.health = 6;
         // player animations
         this.anims.create({
           key: 'straight',
-          frames: this.anims.generateFrameNumbers('ship', { start: 3, end: 5 }),
+          frames: this.anims.generateFrameNumbers('ship', { start: 2, end: 3 }),
           frameRate: 10,
           repeat: -1
         });
         this.anims.create({
           key: 'move',
-          frames: this.anims.generateFrameNumbers('ship', { start: 2, end: 5 }),
+          frames: this.anims.generateFrameNumbers('ship', { start: 4, end: 6 }),
           frameRate: 10,
           repeat: -1
         });
@@ -76,6 +78,13 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.ship, this.asteroids, function (player, asteroid) {
           this.healthBar.scaleX = this.healthBar.scaleX-0.2; 
           asteroid.destroy(); 
+        }, null, this);
+
+        // ship laser group (start's empty)
+        this.shipLaser = this.physics.add.group();
+        this.physics.add.collider(this.shipLaser, this.asteroids, function (shipLaser, asteroid) {
+          asteroid.destroy();
+          shipLaser.destroy(); 
         }, null, this);
 
 
@@ -93,14 +102,14 @@ export class GameScene extends Phaser.Scene {
 
         // player controls
         if (cursors.left.isDown) {
-          this.ship.setVelocityX(-160);
+          this.ship.setVelocityX(-200);
 
           //animation
           this.ship.anims.play('move', true);
           
           //this.ship.anims.play('left', true);
         } else if (cursors.right.isDown) {
-          this.ship.setVelocityX(160);
+          this.ship.setVelocityX(200);
 
           //animation
           this.ship.anims.play('move', true);
@@ -113,8 +122,13 @@ export class GameScene extends Phaser.Scene {
           this.ship.anims.play('straight', true);
         } // if/else if
 
+        if (cursors.space.isDown) {
+          this.makeShipLaser();
+        }
+
         if (time % 1000 <= 10 || (time % 1000 >= 495 && time % 1000 <= 505)) {
-          this.makeAsteroid();  
+          this.makeBigAsteroid();
+          this.makeSmallAsteroid();
         }
 
         if (this.healthBar.scaleX <= 0.1) {
@@ -144,13 +158,30 @@ export class GameScene extends Phaser.Scene {
   } // makeBar
 
   // creates and asteroid in the group "asteroids" at a random x, and set it falling toward the bottom of the screen. 
-  makeAsteroid() {
+  makeBigAsteroid() {
     let x = Math.floor(Math.random() * this.scale.width) + 1 
-    let scale = (Math.floor(Math.random() * 100) + 50) / 100; 
+    let scale = 1 
     let speed = (Math.floor(Math.random() * 250) + 120);
-    const asteroid = this.asteroids.create(x, -16, 'asteroid').setScale(scale); 
+    const asteroid = this.asteroids.create(x, -16, 'bigAsteroid').setScale(scale); 
     asteroid.setVelocityY(speed);
-  } // makeAsteroid
+  } // makeBigAsteroid
+
+  makeSmallAsteroid() {
+    let x = Math.floor(Math.random() * this.scale.width) + 1 
+    let scale = 1 
+    let speed = (Math.floor(Math.random() * 250) + 120);
+    const asteroid = this.asteroids.create(x, -16, 'smallAsteroid').setScale(scale); 
+    asteroid.setVelocityY(speed);
+  } // makeSmallAsteroid
+
+  // creates ship lasers at ship's x coordinate, moving upwards.
+  makeShipLaser() {
+    let x = this.ship.x;
+    let y = 490;
+    let scale = 1;
+    const shipLaser = this.shipLaser.create(x, y, 'shipLaser').setScale(scale); 
+    shipLaser.setVelocityY(-600);
+  } // makeShipLaser
 
   levelFailed() {
     this.scene.pause();
