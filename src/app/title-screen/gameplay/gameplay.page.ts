@@ -45,7 +45,7 @@ export class GameplayPage implements OnInit {
       /*dom: {
         createContainer: true
       },*/
-      scene: [ GameScene ],
+      scene: [ GameDataService ],
       fps: {
         forceSetTimeOut: true
       },
