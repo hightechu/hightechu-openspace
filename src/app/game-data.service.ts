@@ -1,5 +1,6 @@
 import { Injectable} from '@angular/core';
 import Phaser from 'phaser';
+import { timer } from 'rxjs';
 //import { GameplayPage } from './gameplay.page'; 
 //import { GameDataService } from '../../game-data.service'; 
 //import { title } from 'process';
@@ -19,6 +20,9 @@ export class GameDataService extends Phaser.Scene {
   shipLaser;  
   alive: boolean; 
   started: boolean; 
+
+  canShoot = true;
+  timeSinceShot = 0;
 
   constructor() {
       super({
@@ -98,8 +102,7 @@ export class GameDataService extends Phaser.Scene {
   }
 
   update(time): void {
-      const cursors = this.input.keyboard.createCursorKeys();
-
+      const cursors = this.input.keyboard.createCursorKeys();  
       // scrollbackground
       this.starmap1.tilePositionY -= 1;
       this.starmap2.tilePositionY -= 3;
@@ -129,14 +132,23 @@ export class GameDataService extends Phaser.Scene {
         this.ship.anims.play('straight', true);
       } // if/else if
 
-      if (cursors.space.isDown) {
+      // shooting 
+      if (cursors.space.isDown && this.canShoot == true) {
         this.makeShipLaser();
+        this.canShoot = false;  
       }
+      if (this.timeSinceShot > 40) {
+        this.canShoot = true;
+        this.timeSinceShot = 0; 
+      }
+      this.timeSinceShot++;
 
+      // asteroids
       if (time % 1000 <= 10 || (time % 1000 >= 495 && time % 1000 <= 505)) {
           this.makeBigAsteroid();
       }
 
+      // health bar
       if (this.healthBar.scaleX <= 0.1) {
         this.levelFailed(); 
       }
@@ -145,6 +157,8 @@ export class GameDataService extends Phaser.Scene {
   } // update function
 
   // helping functions
+  
+
 
   makeBar(x, y,color) {
     //draw the bar
