@@ -24,3 +24,18 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+.my-custom-popup .popover-content {
+    --background: black;
+    width: 50%; 
+    top: 100px;
+    border-radius: 0px; 
+    border: 4px white solid; 
+    color: white; 
+    
+    ion-backdrop {
+      --backdrop-opacity: 0.6 !important;
+      --background: rgba(0, 0, 0, 0.6); 
+    }
+  
+  }

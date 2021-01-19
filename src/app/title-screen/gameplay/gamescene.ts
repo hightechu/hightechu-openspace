@@ -13,6 +13,7 @@ export class GameScene extends Phaser.Scene {
     healthBar;
     asteroids;
     shipLaser;  
+
     
     dataService: GameDataService = LocatorService.injector.get(GameDataService);
 
@@ -25,6 +26,7 @@ export class GameScene extends Phaser.Scene {
     init(params): void {
        
     }
+
     preload(): void {
         this.load.image('stars1', '../../../assets/sprites/stars1.png'); 
         this.load.image('stars2', '../../../assets/sprites/stars2.gif');
@@ -49,7 +51,9 @@ export class GameScene extends Phaser.Scene {
         const height = this.scale.height; 
         // backgrounds
         this.starmap1 = this.add.tileSprite(0, 0, width, height, 'stars1').setOrigin(0, 0);
-        this.starmap2 = this.add.tileSprite(0, 0, width*2, height*2, 'stars2').setOrigin(0, 0).setScale(0.5);  
+        this.starmap2 = this.add.tileSprite(0, 0, width*2, height*2, 'stars2').setOrigin(0, 0).setScale(0.5);
+        
+        
 
         // player
         this.ship = this.physics.add.sprite(350, 550, 'ship').setScale(1);
@@ -139,6 +143,7 @@ export class GameScene extends Phaser.Scene {
     } // update function
 
     // helping functions
+
     makeBar(x, y,color) {
       //draw the bar
       let bar = this.add.graphics();
@@ -170,7 +175,9 @@ export class GameScene extends Phaser.Scene {
     let x = Math.floor(Math.random() * this.scale.width) + 1 
     let scale = 1 
     let speed = (Math.floor(Math.random() * 250) + 120);
+
     const asteroid = this.asteroids.create(x, -16, 'smallAsteroid').setScale(scale); 
+
     asteroid.setVelocityY(speed);
   } // makeSmallAsteroid
 
