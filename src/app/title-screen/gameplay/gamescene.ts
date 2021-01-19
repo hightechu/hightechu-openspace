@@ -98,18 +98,18 @@ export class GameScene extends Phaser.Scene {
         this.starmap2.tilePositionY -= 3;
 
         //acceleration
-        this.ship.setAccelerationX(150);
+        //this.ship.setAccelerationX(150);
 
         // player controls
         if (cursors.left.isDown) {
-          this.ship.setVelocityX(-200);
+          this.ship.setVelocityX(-275);
 
           //animation
           this.ship.anims.play('move', true);
           
           //this.ship.anims.play('left', true);
         } else if (cursors.right.isDown) {
-          this.ship.setVelocityX(200);
+          this.ship.setVelocityX(275);
 
           //animation
           this.ship.anims.play('move', true);
@@ -177,7 +177,7 @@ export class GameScene extends Phaser.Scene {
   // creates ship lasers at ship's x coordinate, moving upwards.
   makeShipLaser() {
     let x = this.ship.x;
-    let y = 490;
+    let y = 487;
     let scale = 1;
     const shipLaser = this.shipLaser.create(x, y, 'shipLaser').setScale(scale); 
     shipLaser.setVelocityY(-600);
