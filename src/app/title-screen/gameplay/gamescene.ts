@@ -11,7 +11,8 @@ export class GameScene extends Phaser.Scene {
     starmap2;
     ship; 
     healthBar;
-    asteroids;  
+    asteroids; 
+    
     
     dataService: GameDataService = LocatorService.injector.get(GameDataService);
 
@@ -24,6 +25,7 @@ export class GameScene extends Phaser.Scene {
     init(params): void {
        
     }
+
     preload(): void {
         this.load.image('stars1', '../../../assets/backgrounds/stars1.png'); 
         this.load.image('stars2', '../../../assets/backgrounds/stars2.gif');
@@ -47,12 +49,15 @@ export class GameScene extends Phaser.Scene {
         const height = this.scale.height; 
         // backgrounds
         this.starmap1 = this.add.tileSprite(0, 0, width, height, 'stars1').setOrigin(0, 0);
-        this.starmap2 = this.add.tileSprite(0, 0, width*2, height*2, 'stars2').setOrigin(0, 0).setScale(0.5);  
+        this.starmap2 = this.add.tileSprite(0, 0, width*2, height*2, 'stars2').setOrigin(0, 0).setScale(0.5);
+        
+        
 
         // player
         this.ship = this.physics.add.sprite(350, 550, 'ship').setScale(1);
         this.ship.setCollideWorldBounds(true);
         this.ship.health = 100;
+
         // player animations
         this.anims.create({
           key: 'straight',
@@ -125,6 +130,7 @@ export class GameScene extends Phaser.Scene {
     } // update function
 
     // helping functions
+
     makeBar(x, y,color) {
       //draw the bar
       let bar = this.add.graphics();
@@ -148,6 +154,7 @@ export class GameScene extends Phaser.Scene {
     let x = Math.floor(Math.random() * this.scale.width) + 1 
     let scale = (Math.floor(Math.random() * 100) + 50) / 100; 
     let speed = (Math.floor(Math.random() * 250) + 120);
+
     const asteroid = this.asteroids.create(x, -16, 'asteroid').setScale(scale); 
     asteroid.setVelocityY(speed);
   } // makeAsteroid

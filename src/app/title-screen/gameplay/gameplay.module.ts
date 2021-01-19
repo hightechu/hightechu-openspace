@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { GameplayPageRoutingModule } from './gameplay-routing.module';
 
 import { GameplayPage } from './gameplay.page';
+import { PopupComponent } from './popup/popup.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { GameplayPage } from './gameplay.page';
     IonicModule,
     GameplayPageRoutingModule
   ],
-  declarations: [GameplayPage]
+  declarations: [GameplayPage, PopupComponent]
 })
 export class GameplayPageModule {}
