@@ -8,7 +8,6 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { LocatorService } from './locator.service'; 
 
 
 @NgModule({
@@ -23,7 +22,5 @@ import { LocatorService } from './locator.service';
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(private injector: Injector) {
-    LocatorService.injector = injector;
-}
+
 }

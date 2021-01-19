@@ -8,7 +8,6 @@ import Phaser from 'phaser';
 
 // local classes/files
 import { GameDataService } from '../../game-data.service';
-import { GameScene } from './gamescene';
 import { PopupComponent } from './popup/popup.component';  
 
 @Component({
