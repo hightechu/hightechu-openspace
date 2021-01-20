@@ -15,8 +15,13 @@ export class GameDataService extends Phaser.Scene {
   starmap2;
   ship; 
   healthBar;
+  score = 0;
+  barColor = 0x00FF00;
+  scoreText;
   asteroids;
-  shipLaser;  
+  shipLasers; 
+  enemyShips;
+  enemyLasers; 
   alive: boolean; 
   started: boolean; 
 
@@ -33,17 +38,20 @@ export class GameDataService extends Phaser.Scene {
   preload(): void {
       this.load.image('stars1', '../../../assets/sprites/stars1.png'); 
       this.load.image('stars2', '../../../assets/sprites/stars2.gif');
-      this.load.image('bigAsteroid', '../../../assets/sprites/asteroid1.png'); 
       //this.load.image('smallAsteroid', '../../../assets/sprites/asteroid2.png');
-      this.load.image('shipLaser', '../../../assets/sprites/shipLaser.png');  
+      this.load.image('shipLaser', '../../../assets/sprites/shipLaser.png');
+      this.load.image('enemyShip', '../../../assets/sprites/testEnemy.png');
+      this.load.image('enemyLaser', '../../../assets/sprites/enemyLaser.png');        
       
       this.load.spritesheet('ship', '../../../assets/sprites/shipSheet3.png',{ 
-        frameWidth: 64, 
+        frameWidth: 68, 
         frameHeight: 80
        }); 
 
-       // health bar
-       //this.load.image('health', '../../../assets/backgrounds/healthBar.png'); 
+      this.load.spritesheet('bigAsteroid', '../../../assets/sprites/asteroid1.png',{ 
+        frameWidth: 68, 
+        frameHeight: 68
+       }); 
        
   } // preload function
     
@@ -117,10 +125,18 @@ export class GameDataService extends Phaser.Scene {
         frameRate: 10,
         repeat: -1
       });
+
+      //Big asteroid animation
+      this.anims.create({
+        key: 'bigAsteroidDestroyed',
+        frames: this.anims.generateFrameNumbers('bigAsteroid', { start: 1, end: 5 }),
+        frameRate: 25,
+        repeat: 0
+      });
       
       
       //healthBar
-      this.healthBar = this.makeBar(20, 20, 0xFF0000);
+      this.healthBar = this.makeBar(20, 20, this.barColor);
       this.healthBar.scaleX = 1;
       
       // asteroids group (start's empty)
@@ -131,11 +147,23 @@ export class GameDataService extends Phaser.Scene {
       }, null, this);
 
       // ship laser group (start's empty)
-      this.shipLaser = this.physics.add.group();
-      this.physics.add.collider(this.shipLaser, this.asteroids, function (shipLaser, asteroid) {
+      this.shipLasers = this.physics.add.group();
+      this.physics.add.collider(this.shipLasers, this.asteroids, function (shipLaser, asteroid) {
+        this.score += 50;
+        this.scoreText.setText('Points: ' + this.score);
         asteroid.destroy();
         shipLaser.destroy(); 
       }, null, this);
+
+      // enemy laser group (start's empty)
+      this.enemyLasers = this.physics.add.group();
+      this.physics.add.collider(this.ship, this.enemyLasers, function (player, enemyLaser) {
+        this.healthBar.scaleX = this.healthBar.scaleX-0.2; 
+        enemyLaser.destroy(); 
+      }, null, this);
+
+      this.scoreText = this.add.text(250, 18, 'Points: 0', {fontSize: '28px', color: 'white'});
+
 
 
   }
@@ -180,7 +208,7 @@ export class GameDataService extends Phaser.Scene {
 
         //this.ship.anims.play('straight', true);
       } else {
-        this.ship.setVelocityY(0);
+        this.ship.setVelocityY(0);  
         this.ship.setVelocityX(0);
 
         //animation
@@ -195,13 +223,18 @@ export class GameDataService extends Phaser.Scene {
 
       if (time % 1000 <= 10 || (time % 1000 >= 495 && time % 1000 <= 505)) {
           this.makeBigAsteroid();
+          this.makeEnemyLaser();
+      }
+
+      if (this.healthBar.scaleX <= 0.5) {
+        this.barColor =  0xFF0000;
       }
 
       if (this.healthBar.scaleX <= 0.1) {
         this.levelFailed(); 
       }
 
-
+ 
   } // update function
 
   // helping functions
@@ -238,9 +271,17 @@ makeShipLaser() {
   let x = this.ship.x;
   let y = this.ship.y - 54;
   let scale = 1;
-  const shipLaser = this.shipLaser.create(x, y, 'shipLaser').setScale(scale); 
+  const shipLaser = this.shipLasers.create(x, y, 'shipLaser').setScale(scale); 
   shipLaser.setVelocityY(-600);
 } // makeShipLaser
+
+makeEnemyLaser() {
+  let x = this.ship.x;
+  let y = 20;
+  let scale = 1;
+  const enemyLaser = this.enemyLasers.create(x, y, 'enemyLaser').setScale(scale); 
+  enemyLaser.setVelocityY(400);
+} // makeEnemyLaser
 
 levelFailed() {
   this.scene.pause();
