@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import Phaser from 'phaser';
 
 // local data/files
 import { dataModel } from './data.model'; 
@@ -14,14 +15,17 @@ export class PopupComponent implements OnInit {
   @Input() data: dataModel;
 
 
+
   constructor(protected dataService: GameDataService) {
   }
 
   ngOnInit() {
+    this.dataService.gameInstance.scene.pause('GameScene'); 
   }
 
   // start's the players game
   startGame() {
+    this.dataService.gameInstance.scene.start('GameScene'); 
     this.resetGameScene(); 
     this.popover.dismiss().then(() => { this.popover = null; }); 
   }
