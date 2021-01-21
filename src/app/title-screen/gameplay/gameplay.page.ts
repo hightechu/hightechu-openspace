@@ -28,7 +28,7 @@ export class GameplayPage implements OnInit {
   subscription: Subscription = new Subscription(); 
   testSubscription: Subscription = new Subscription(); 
 
-  constructor(protected dataService: GameDataService, protected popupService: PopupService) {
+  constructor(public dataService: GameDataService, public popupService: PopupService) {
   }
 
   ngOnInit() {
