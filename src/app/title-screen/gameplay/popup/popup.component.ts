@@ -20,23 +20,27 @@ export class PopupComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataService.gameInstance.scene.pause('GameScene'); 
+    this.dataService.gameInstance.scene.pause('GameScene');
   }
 
   // start's the players game
   startGame() {
     this.dataService.gameInstance.scene.start('GameScene'); 
     this.resetGameScene(); 
-    this.popover.dismiss().then(() => { this.popover = null; }); 
+    this.closePopup(); 
   }
 
   //continues the players game from where they left off
   continueGame() {
-    this.popover.dismiss().then(() => { this.popover = null; });
+    this.closePopup(); 
   }
 
   resetGameScene() {
 
+  }
+
+  closePopup() {
+    this.popover.dismiss().then(() => { this.popover = null; }); 
   }
 
 }
