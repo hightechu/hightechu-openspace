@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameDataService } from '../game-data.service';
 
 @Component({
   selector: 'app-title-screen',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TitleScreenPage implements OnInit {
 
-  constructor() { }
+  constructor(protected dataService: GameDataService) { }
 
   ngOnInit() {
+  }
+
+  startGame() {
+    this.dataService.gameInstance.scene.start('GameScene');
   }
 
 }

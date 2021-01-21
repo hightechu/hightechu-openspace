@@ -1,6 +1,6 @@
 // Angular/ionic featres
 import { Component, OnInit } from '@angular/core';
-
+import { Subscription } from 'rxjs'; 
 // external libraries
 import Phaser from 'phaser';
 import { PopupService } from '../../popup.service';
@@ -25,9 +25,23 @@ export class GameplayPage implements OnInit {
   checkpointPopover = null;
   instructionsPopover = null; 
 
-  constructor(protected dataService: GameDataService, protected popupService: PopupService) {}
+  subscription: Subscription = new Subscription(); 
+  testSubscription: Subscription = new Subscription(); 
+
+  constructor(protected dataService: GameDataService, protected popupService: PopupService) {
+  }
 
   ngOnInit() {
+    this.subscription = this.dataService.popupChanged.subscribe((popup) => { 
+      console.log("new Popup is: " + popup); 
+      this.popupService.popover(popup); 
+    });
+
+    this.testSubscription = this.popupService.testSubject.subscribe((test) => { 
+      console.log("Test phrase is: " + test); 
+      this.popupService.popover(test); 
+    });
+
     this.config = {
       width: 800,
       height: 600,
@@ -58,8 +72,7 @@ export class GameplayPage implements OnInit {
       this.gameInstance.gameInstanceService = this;
       this.dataService.gameInstance = this.gameInstance; 
     } // if
-
-    this.popupService.popover('instructions'); 
+    
   } // ngOnInit
 
 } // end of class "GameplayPage"

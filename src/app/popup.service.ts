@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
 
 
 import { PopupComponent } from './title-screen/gameplay/popup/popup.component';
@@ -14,9 +15,9 @@ export class PopupService {
   checkpointPopover = null;
   instructionsPopover = null; 
 
-  constructor( 
-    public popoverController: PopoverController, 
-    private alertCtrl: AlertController) { }
+  testSubject: BehaviorSubject<string> = new BehaviorSubject<string>("null");                                                         
+
+  constructor(public popoverController: PopoverController) { }
 
     // async function to control the potential popups for the game. This includes a deathscreen, instructions, and checkpoints
     popover = async function presentPopover(type: string) {
@@ -71,7 +72,13 @@ export class PopupService {
           backdropDismiss: false
         });
         return await this.instructionsPopover.present();
+
+  
       }
   
     } // presentPopover
+
+    testSubjectFunction() {
+      this.testSubject.next('death'); 
+    }
 }
