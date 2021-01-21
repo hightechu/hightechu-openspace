@@ -8,7 +8,7 @@ import { GameDataService } from '../game-data.service';
 })
 export class TitleScreenPage implements OnInit {
 
-  constructor(protected dataService: GameDataService) { }
+  constructor(public dataService: GameDataService) { }
 
   ngOnInit() {
   }
