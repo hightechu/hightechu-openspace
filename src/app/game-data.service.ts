@@ -1,8 +1,8 @@
 import { Injectable} from '@angular/core';
+import { BehaviorSubject } from 'rxjs'; 
 
 import Phaser from 'phaser';
 
-import { PopupService } from './popup.service';
 
 
 @Injectable({
@@ -22,12 +22,17 @@ export class GameDataService extends Phaser.Scene {
   asteroids;
   shipLasers; 
   enemyShips;
-  enemyLasers;
- 
-  alive: boolean; 
+
+  enemyLasers; 
+
+  currentAsteroid = null; 
+
+  popupChanged: BehaviorSubject<string> = new BehaviorSubject<string>("instructions"); 
+
 
   canShoot = true;
   timeSinceShot = 0;
+
 
   timeSincePoints = 0;
   timeSinceEnemyShot = 0;
@@ -38,14 +43,15 @@ export class GameDataService extends Phaser.Scene {
 
   currentEnemy;
 
-  constructor(protected popupService: PopupService) {
+  constructor() {
       super({
         key: "GameScene"
       });
   }
 
+
   init(params): void {
-     
+    this.popupChanged.next("instructions"); 
   }
 
   preload(): void {
@@ -139,6 +145,12 @@ export class GameDataService extends Phaser.Scene {
         frameRate: 10,
         repeat: -1
       });
+      
+      //healthBar
+      this.add.image(20, 20, 'healthBar').setOrigin(0, 0).setScale(1.4); 
+      this.healthBar = this.makeBar(157, 23, 0x2FF485);
+      this.healthBar.scaleX = 1;
+
 
         // asteroid animation
         this.anims.create({
@@ -147,26 +159,28 @@ export class GameDataService extends Phaser.Scene {
           frameRate: 10,
         });
         this.anims.create({
-          key: 'asteroidExplode',
+          key: 'explode',
           frames: this.anims.generateFrameNumbers('asteroid', { start: 1, end: 5 }),
           frameRate: 10,
-          repeat: 0
+          repeat: 1
         });
       
       // asteroids group (start's empty)
       this.asteroids = this.physics.add.group();
       this.physics.add.collider(this.ship, this.asteroids, function (player, asteroid) {
-        this.healthBar.scaleX = this.healthBar.scaleX-0.1; 
-        asteroid.destroy(); 
+        this.healthBar.scaleX = this.healthBar.scaleX-0.1;
+        if (this.currentAsteroid == null) {
+          asteroid.destroy(); 
+        } 
       }, null, this);
 
 
       // ship laser group (start's empty)
       this.shipLasers = this.physics.add.group();
       this.physics.add.collider(this.shipLasers, this.asteroids, function (shipLaser, asteroid) {
+        this.currentAsteroid = asteroid; 
         this.score += 50;
         this.scoreText.setText(' ' + this.score);
-        asteroid.destroy();
         shipLaser.destroy();
       }, null, this);
       
@@ -194,13 +208,25 @@ export class GameDataService extends Phaser.Scene {
       this.healthBar = this.makeBar(114, 18, 0x2FF485);
       this.healthBar.scaleX = 1;
 
+
       this.scoreText = this.add.text(400, 12, ' 0', {fontSize: '24px', color: 'white'});
 
       this.add.image(0, 0, 'screenBorder').setOrigin(0, 0).setScale(1); 
 
-  }
+  } // phaser create
 
   update(time): void {
+
+    if (this.currentAsteroid != null) {
+      this.currentAsteroid.anims.play('explode', true);
+      this.currentAsteroid.once("animationrepeat", () => {
+        if (this.currentAsteroid != null) {
+          this.currentAsteroid.destroy();
+          this.currentAsteroid = null;  
+        }
+      });
+    }
+
       const cursors = this.input.keyboard.createCursorKeys();  
       // scrollbackground
       this.starmap1.tilePositionY -= 1;
@@ -365,10 +391,11 @@ makeEnemyLaser() {
 } // makeEnemyLaser
 
 levelFailed() {
+  console.log("new popup incoming"); 
+  this.popupChanged.next('death'); 
   this.scene.pause();
-  this.alive = false; 
-  this.popupService.popover('death'); 
 }
+
 
 
 
