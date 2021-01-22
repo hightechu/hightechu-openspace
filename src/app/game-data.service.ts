@@ -294,7 +294,7 @@ export class GameDataService extends Phaser.Scene {
     this.colorCounter++; 
 
     // checkpoint popup every 1000 points gained
-    if (this.score > 100*this.checkpoint) {
+    if (this.score > 500*this.checkpoint) {
       this.popoverService.popover("checkpoint"); 
       this.checkpoint++; 
     }
