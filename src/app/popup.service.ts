@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { AlertController } from '@ionic/angular';
-import { BehaviorSubject } from 'rxjs';
+import { GameDataService } from './game-data.service';
 
 
 import { PopupComponent } from './title-screen/gameplay/popup/popup.component';
@@ -13,9 +12,7 @@ export class PopupService {
 
   deathPopover = null; 
   checkpointPopover = null;
-  instructionsPopover = null; 
-
-  testSubject: BehaviorSubject<string> = new BehaviorSubject<string>("null");                                                         
+  instructionsPopover = null;                                                     
 
   constructor(public popoverController: PopoverController) { }
 
@@ -78,7 +75,4 @@ export class PopupService {
   
     } // presentPopover
 
-    testSubjectFunction() {
-      this.testSubject.next('death'); 
-    }
 }

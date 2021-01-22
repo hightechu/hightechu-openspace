@@ -26,12 +26,12 @@
 @import "~@ionic/angular/css/flex-utils.css";
 
 .my-custom-popup .popover-content {
-    --background: black;
+    --background: var(--ion-color-theme);
     width: 50%; 
     top: 100px;
     border-radius: 0px; 
-    border: 4px white solid; 
-    color: white; 
+    border: 4px var(--ion-color-dark) solid; 
+    color: var(--ion-color-dark); 
     
     ion-backdrop {
       --backdrop-opacity: 0.6 !important;

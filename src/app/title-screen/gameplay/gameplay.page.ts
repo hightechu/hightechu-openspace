@@ -7,6 +7,7 @@ import { PopupService } from '../../popup.service';
 
 // local classes/files
 import { GameDataService } from '../../game-data.service'; 
+import { ColorsService } from 'src/app/colors.service';
 
 @Component({
   selector: 'app-gameplay',
@@ -15,32 +16,12 @@ import { GameDataService } from '../../game-data.service';
 })
 export class GameplayPage implements OnInit {
 
-  public gameInstance: any;
-
-  game: Phaser.Game; // phaser game instance
+  gameInstance: any;
   config: Phaser.Types.Core.GameConfig; // phaser configuration object
 
-  // popovers
-  deathPopover = null; 
-  checkpointPopover = null;
-  instructionsPopover = null; 
-
-  subscription: Subscription = new Subscription(); 
-  testSubscription: Subscription = new Subscription(); 
-
-  constructor(protected dataService: GameDataService, protected popupService: PopupService) {
-  }
+  constructor(public dataService: GameDataService, public popupService: PopupService, public colorService: ColorsService) {}
 
   ngOnInit() {
-    this.subscription = this.dataService.popupChanged.subscribe((popup) => { 
-      console.log("new Popup is: " + popup); 
-      this.popupService.popover(popup); 
-    });
-
-    this.testSubscription = this.popupService.testSubject.subscribe((test) => { 
-      console.log("Test phrase is: " + test); 
-      this.popupService.popover(test); 
-    });
 
     this.config = {
       width: 800,
@@ -48,7 +29,7 @@ export class GameplayPage implements OnInit {
       type: Phaser.AUTO,
       scale: {
         /*mode: Phaser.Scale.RESIZE,*/
-        autoCenter: Phaser.Scale.CENTER_HORIZONTALLY
+        autoCenter: Phaser.Scale.CENTER_BOTH
       },
       parent: 'phaser',
       /*dom: {
@@ -69,10 +50,11 @@ export class GameplayPage implements OnInit {
 
     if (!this.gameInstance) {
       this.gameInstance = new Phaser.Game(this.config);
-      this.gameInstance.gameInstanceService = this;
       this.dataService.gameInstance = this.gameInstance; 
     } // if
-    
+
+    this.popupService.popover("instructions"); 
+
   } // ngOnInit
 
 } // end of class "GameplayPage"
