@@ -22,10 +22,20 @@ export class GameDataService extends Phaser.Scene {
   asteroids;
   shipLasers; 
   enemyShips;
+  rank;
+
+  enemyZoneBoxLeft;
+  enemyZoneBoxRight;
+
+  enemyGoingLeft = null; 
+  enemyGoingRight = null;
 
   enemyLasers; 
 
-  currentAsteroid = null; 
+  currentAsteroid = null;
+  asteroidHitShip = null;
+  currentShipLaser = null; 
+  currentEnemyLaser = null;
 
   popupChanged: BehaviorSubject<string> = new BehaviorSubject<string>("instructions"); 
 
@@ -59,10 +69,9 @@ export class GameDataService extends Phaser.Scene {
       this.load.image('stars2', '../../../assets/sprites/stars2.gif');
       this.load.image('HUD', '../../../assets/sprites/hud.png');
       this.load.image('screenBorder', '../../../assets/sprites/screenBorder.png');
+      this.load.image('enemyCollisionBox', '../../../assets/sprites/collideBox.png');
 
-      this.load.image('shipLaser', '../../../assets/sprites/shipLaser.png');
-      this.load.image('enemyShip', '../../../assets/sprites/testEnemy.png');
-      this.load.image('enemyLaser', '../../../assets/sprites/enemyLaser.png');        
+      this.load.image('enemyShip', '../../../assets/sprites/testEnemy.png');        
 
       this.load.spritesheet('ship', '../../../assets/sprites/shipSheet3.png',{ 
         frameWidth: 68, 
@@ -73,6 +82,16 @@ export class GameDataService extends Phaser.Scene {
         frameWidth: 68, 
         frameHeight: 68
        }); 
+
+       this.load.spritesheet('shipLaser', '../../../assets/sprites/shipLaser.png',{
+        frameWidth: 32, 
+        frameHeight: 32
+       });
+
+       this.load.spritesheet('enemyLaser', '../../../assets/sprites/enemyLaser.png',{
+        frameWidth: 36, 
+        frameHeight: 32
+       });
        
   } // preload function
     
@@ -83,7 +102,6 @@ export class GameDataService extends Phaser.Scene {
       // backgrounds
       this.starmap1 = this.add.tileSprite(0, 0, width, height, 'stars1').setOrigin(0, 0);
       this.starmap2 = this.add.tileSprite(0, 0, width*2, height*2, 'stars2').setOrigin(0, 0).setScale(0.5);
-      
       
 
       // player
@@ -145,12 +163,6 @@ export class GameDataService extends Phaser.Scene {
         frameRate: 10,
         repeat: -1
       });
-      
-      //healthBar
-      this.add.image(20, 20, 'healthBar').setOrigin(0, 0).setScale(1.4); 
-      this.healthBar = this.makeBar(157, 23, 0x2FF485);
-      this.healthBar.scaleX = 1;
-
 
         // asteroid animation
         this.anims.create({
@@ -159,72 +171,156 @@ export class GameDataService extends Phaser.Scene {
           frameRate: 10,
         });
         this.anims.create({
-          key: 'explode',
+          key: 'asteroidExplode',
           frames: this.anims.generateFrameNumbers('asteroid', { start: 1, end: 5 }),
+          frameRate: 15,
+          repeat: 1
+        });
+
+        //ship laser animation
+        this.anims.create({
+          key: 'shipLaserFly', 
+          frames: [ { key: 'shipLaser', frame: 0 } ],
           frameRate: 10,
+        });
+        this.anims.create({
+          key: 'shipLaserExplode',
+          frames: this.anims.generateFrameNumbers('shipLaser', { start: 1, end: 5 }),
+          frameRate: 25,
+          repeat: 1
+        });
+
+        //enemy laser animation
+        this.anims.create({
+          key: 'enemyLaserFly', 
+          frames: [ { key: 'enemyLaser', frame: 0 } ],
+          frameRate: 10,
+        });
+        this.anims.create({
+          key: 'enemyLaserExplode',
+          frames: this.anims.generateFrameNumbers('enemyLaser', { start: 1, end: 5 }),
+          frameRate: 25,
           repeat: 1
         });
       
       // asteroids group (start's empty)
       this.asteroids = this.physics.add.group();
       this.physics.add.collider(this.ship, this.asteroids, function (player, asteroid) {
-        this.healthBar.scaleX = this.healthBar.scaleX-0.1;
-        if (this.currentAsteroid == null) {
-          asteroid.destroy(); 
-        } 
+        this.asteroidHitShip = asteroid;
       }, null, this);
 
 
       // ship laser group (start's empty)
       this.shipLasers = this.physics.add.group();
       this.physics.add.collider(this.shipLasers, this.asteroids, function (shipLaser, asteroid) {
-        this.currentAsteroid = asteroid; 
-        this.score += 50;
-        this.scoreText.setText(' ' + this.score);
-        shipLaser.destroy();
+        this.currentAsteroid = asteroid;
+        this.currentShipLaser = shipLaser; 
       }, null, this);
       
 
       // enemy ship group (start's empty)
       this.enemyShips = this.physics.add.group();
       this.physics.add.collider(this.shipLasers, this.enemyShips, function (shipLaser, enemyShip) {
+        this.currentShipLaser = shipLaser; 
         this.score += 200;
         this.scoreText.setText(' ' + this.score);
         this.enemyDestroyed = true;
         enemyShip.destroy();
-        shipLaser.destroy();
       }, null, this);
       
 
       // enemy laser group (start's empty)
       this.enemyLasers = this.physics.add.group();
       this.physics.add.collider(this.ship, this.enemyLasers, function (player, enemyLaser) {
-        this.healthBar.scaleX = this.healthBar.scaleX-0.1; 
-        enemyLaser.destroy(); 
+        this.currentEnemyLaser = enemyLaser; 
       }, null, this);
+
+      // invisible collision box groups 
+      this.enemyZoneBoxLeft = this.physics.add.group();
+      this.physics.add.collider(this.enemyShips, this.enemyZoneBoxLeft, function (enemyShip, leftBox) {
+        this.enemyGoingRight = enemyShip;
+      }, null, this);
+
+      this.enemyZoneBoxRight = this.physics.add.group();
+      this.physics.add.collider(this.enemyShips, this.enemyZoneBoxRight, function (enemyShip, rightBox) {
+        this.enemyGoingLeft = enemyShip;
+      }, null, this);
+
+      this.enemyZoneBoxLeft = this.makeEnemyZoneBoxLeft();
+      this.enemyZoneBoxRight = this.makeEnemyZoneBoxRight();
 
       //healthBar
       this.add.image(0, 0, 'HUD').setOrigin(0, 0).setScale(1); 
-      this.healthBar = this.makeBar(114, 18, 0x2FF485);
+      this.healthBar = this.makeBar(114, 18, 0x2FF875);
       this.healthBar.scaleX = 1;
 
-
+      //score counter number
       this.scoreText = this.add.text(400, 12, ' 0', {fontSize: '24px', color: 'white'});
 
+      //white border around the game area
       this.add.image(0, 0, 'screenBorder').setOrigin(0, 0).setScale(1); 
 
   } // phaser create
 
   update(time): void {
 
+    //if asteroid is shot by player
     if (this.currentAsteroid != null) {
-      this.currentAsteroid.anims.play('explode', true);
+      this.currentAsteroid.anims.play('asteroidExplode', true);
       this.currentAsteroid.once("animationrepeat", () => {
         if (this.currentAsteroid != null) {
           this.currentAsteroid.destroy();
+          this.score += 50;
+          this.scoreText.setText(' ' + this.score);
           this.currentAsteroid = null;  
         }
       });
+    }
+
+    //if asteroid hits player ship
+    if (this.asteroidHitShip != null) {
+      this.asteroidHitShip.anims.play('asteroidExplode', true);
+      this.asteroidHitShip.once("animationrepeat", () => {
+        if (this.asteroidHitShip != null) {
+          this.asteroidHitShip.destroy();
+          this.healthBar.scaleX = this.healthBar.scaleX-0.1;
+          this.asteroidHitShip = null;  
+        }
+      });
+    }
+
+    //ship laser explosion animation
+    if (this.currentShipLaser != null) {
+      this.currentShipLaser.anims.play('shipLaserExplode', true);
+      this.currentShipLaser.once("animationrepeat", () => {
+        if (this.currentShipLaser != null) {
+          this.currentShipLaser.destroy();
+          this.currentShipLaser = null;  
+        }
+      });
+    }
+
+    //if enemy laser hits player ship
+    if (this.currentEnemyLaser != null) {
+      this.currentEnemyLaser.anims.play('enemyLaserExplode', true);
+      this.currentEnemyLaser.once("animationrepeat", () => {
+        if (this.currentEnemyLaser != null) {
+          this.currentEnemyLaser.destroy();
+          this.healthBar.scaleX = this.healthBar.scaleX-0.1;
+          this.currentEnemyLaser = null;  
+        }
+      });
+    }
+
+    //basic enemy movement logic
+    if (this.enemyGoingLeft != null) {
+      this.enemyGoingLeft.setVelocityX(-200);
+      this.enemyGoingLeft = null;  
+    }
+
+    if (this.enemyGoingRight != null) {
+      this.enemyGoingRight.setVelocityX(200);
+      this.enemyGoingRight = null;  
     }
 
       const cursors = this.input.keyboard.createCursorKeys();  
@@ -302,30 +398,10 @@ export class GameDataService extends Phaser.Scene {
         this.enemyDestroyed = false;
       }
       this.timeSinceEnemySpawned++;
-/*
-      //enemy movement conditions
-         for (let i = 0; i < this.enemyShips.getLength(); i++) {
-          console.log("Test for loop" + this.enemyShips.getLength());
-
-        if(this.enemyShips[i].x > 400) {
-          console.log("Test for if x");
-          this.enemyShips[i].setVelocityX(-200);
-        } else if(this.enemyShips[i].x < 50) {
-          this.enemyShips[i].setVelocityX(200);
-        }
-      }*/
 
       // asteroids
       if (time % 1000 <= 10 || (time % 1000 >= 495 && time % 1000 <= 505)) {
           this.makeBigAsteroid();
-      }
-
-      if (this.healthBar.scaleX <= 0.6 && this.healthBar.scaleX > 0.3) {
-        this.healthBar.fillStyle("0xE56F0D", 1);
-      }
-
-      if (this.healthBar.scaleX <= 0.3) {
-        this.healthBar.fillStyle("0xAE0303", 1);
       }
 
       // health bar
@@ -356,6 +432,42 @@ export class GameDataService extends Phaser.Scene {
     return bar;
 } // makeBar
 
+/*makeEnemyZoneBoxLeft(x, y,color) {
+  //draw the bar
+  let bar = this.add.graphics();
+
+  //color the bar
+  bar.fillStyle(color, 1);
+
+  //fill the bar with a rectangle
+  bar.fillRect(0, 0, 25, 150);
+  
+  //position the bar
+  bar.x = x;
+  bar.y = y;
+
+  //return the bar
+  return bar;
+} // makeBar
+
+makeEnemyZoneBoxRight(x, y,color) {
+  //draw the bar
+  let bar = this.add.graphics();
+
+  //color the bar
+  bar.fillStyle(color, 1);
+
+  //fill the bar with a rectangle
+  bar.fillRect(0, 0, 25, 150);
+  
+  //position the bar
+  bar.x = x;
+  bar.y = y;
+
+  //return the bar
+  return bar;
+} // makeBar*/
+
 // creates and asteroid in the group "asteroids" at a random x, and set it falling toward the bottom of the screen. 
 makeBigAsteroid() {
     let x = Math.floor(Math.random() * this.scale.width) + 1;
@@ -375,13 +487,16 @@ makeShipLaser() {
   shipLaser.setVelocityY(-600);
 } // makeShipLaser
 
+//creates enemy ships
 makeEnemyShip() {
-  let x = 760;
+  let x = 500;
   let y = 100;
   let scale = 1;
   const enemyShip = this.enemyShips.create(x, y, 'enemyShip').setScale(scale);
+  enemyShip.setVelocityX(200);
 } // makeEnemyShip
 
+//generates enemy lasers, currently at the ship's x value
 makeEnemyLaser() {
   let x = this.ship.x;
   let y = -20;
@@ -390,14 +505,26 @@ makeEnemyLaser() {
   enemyLaser.setVelocityY(400);
 } // makeEnemyLaser
 
+//invisible collision boxes for enemies
+makeEnemyZoneBoxLeft() {
+  let x = 0;
+  let y = 75;
+  let scale = 1;
+  const leftBox = this.enemyZoneBoxLeft.create(x, y, 'enemyCollisionBox').setScale(scale).setImmovable(true); 
+} // makeEnemyCollideBox (Left)
+
+makeEnemyZoneBoxRight() {
+  let x = 800;
+  let y = 75;
+  let scale = 1;
+  const rightBox = this.enemyZoneBoxRight.create(x, y, 'enemyCollisionBox').setScale(scale).setImmovable(true);
+} // makeEnemyCollideBox (Right)
+
+//if HP = 0
 levelFailed() {
   console.log("new popup incoming"); 
   this.popupChanged.next('death'); 
   this.scene.pause();
 }
-
-
-
-
 
 } // gameScene class
