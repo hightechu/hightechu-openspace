@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { GameDataService } from '../game-data.service';
+import { PopupService } from '../popup.service';
 
 @Component({
   selector: 'app-title-screen',
@@ -9,7 +10,7 @@ import { GameDataService } from '../game-data.service';
 })
 export class TitleScreenPage implements OnInit {
 
-  constructor(public dataService: GameDataService, public popupService: PopoverController) { }
+  constructor(public dataService: GameDataService, public popupService: PopupService) {}
 
   ngOnInit() {
   }

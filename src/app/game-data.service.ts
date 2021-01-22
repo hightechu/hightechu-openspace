@@ -15,7 +15,9 @@ export class GameDataService extends Phaser.Scene {
   starmap2;
   ship; 
   healthBar;
+
   score;
+  checkpoint = 1; 
   scoreText;
   asteroids;
   shipLasers; 
@@ -57,6 +59,8 @@ export class GameDataService extends Phaser.Scene {
 
   popoverService; 
 
+  colorCounter = 0; 
+
   constructor() {
       super({
         key: "GameScene"
@@ -68,7 +72,7 @@ export class GameDataService extends Phaser.Scene {
     this.popoverService = params; 
     this.score = 0; 
     this.asteroidSpawnMultiplyer = 100;
-    this.timeSinceEnemySpawned = 0; 
+    this.timeSinceEnemySpawned = 0
   }
 
   preload(): void {
@@ -271,7 +275,26 @@ export class GameDataService extends Phaser.Scene {
 
   } // phaser create
 
+  /**
+   * UPDATE FUNCTION
+   * 
+   */
+
   update(time): void {
+
+    // background color change
+    if (this.colorCounter > 20) {
+      //this.startColor++; 
+      this.cameras.main.setBackgroundColor(`rgb(${this.popoverService.r}, ${this.popoverService.g}, ${this.popoverService.b})`);
+      this.colorCounter = 0; 
+    } 
+    this.colorCounter++; 
+
+    // checkpoint popup every 1000 points gained
+    if (this.score > 100*this.checkpoint) {
+      this.popoverService.popover("checkpoint"); 
+      this.checkpoint++; 
+    }
 
     //if asteroid is shot by player
     if (this.currentAsteroid != null) {
@@ -423,17 +446,6 @@ export class GameDataService extends Phaser.Scene {
       }
       this.timeSinceAsteroid++; 
 
-      // asteroid animation that runs if currentAsteroid contains a !null value given in the collision callback fxn
-      if (this.currentAsteroid != null) {
-        this.currentAsteroid.anims.play('explode', true);
-        this.currentAsteroid.once("animationrepeat", () => {
-          if (this.currentAsteroid != null) {
-            this.currentAsteroid.destroy();
-            this.currentAsteroid = null;  
-          }
-        });
-      }
-
       // health bar changes color as it gets smaller
       if (this.healthBar.scaleX <= 0.6 && this.healthBar.scaleX > 0.3) {
         this.healthBar.fillStyle("0xE56F0D", 1);
@@ -562,7 +574,6 @@ makeEnemyZoneBoxRight() {
 //if HP = 0
 levelFailed() {
   this.popoverService.popover('death'); 
-  this.scene.pause();
 }
 
 } // gameScene class

@@ -24,18 +24,16 @@ export class PopupComponent implements OnInit {
   // start's the players game
   startGame() {
     this.dataService.gameInstance.scene.start('GameScene', this.popoverService); 
-    this.resetGameScene(); 
     this.closePopup(); 
   }
 
   //continues the players game from where they left off
   continueGame() {
     this.closePopup(); 
-  }
-
-  resetGameScene() {
+    this.dataService.gameInstance.scene.resume('GameScene');
 
   }
+
 
   closePopup() {
     this.popover.dismiss().then(() => { this.popover = null; }); 
