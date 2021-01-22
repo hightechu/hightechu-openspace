@@ -95,12 +95,12 @@ export class GameDataService extends Phaser.Scene {
        }); 
 
        this.load.spritesheet('shipLaser', '../../../assets/sprites/shipLaser.png',{
-        frameWidth: 32, 
+        frameWidth: 36, 
         frameHeight: 32
        });
 
        this.load.spritesheet('enemyLaser', '../../../assets/sprites/enemyLaser.png',{
-        frameWidth: 36, 
+        frameWidth: 40, 
         frameHeight: 32
        });
        
@@ -268,7 +268,10 @@ export class GameDataService extends Phaser.Scene {
       this.healthBar.scaleX = 1;
 
       //score counter number
-      this.scoreText = this.add.text(400, 12, ' 0', {fontSize: '24px', color: 'white'});
+      this.scoreText = this.add.text(384, 12, ' 0', {fontSize: '24px', color: 'white'});
+
+      //rank display
+      this.rank = this.add.text(580, 12, ' ', {fontSize: '24px', color: 'white'});
 
       //white border around the game area
       this.add.image(0, 0, 'screenBorder').setOrigin(0, 0).setScale(1); 
@@ -458,6 +461,14 @@ export class GameDataService extends Phaser.Scene {
       // level is failed if healthbar is gone
       if (this.healthBar.scaleX <= 0.1) {
         this.levelFailed(); 
+      }
+
+      if (this.score >= 100 && this.score < 5000) {
+        this.rank.setText(' Rookie Pilot');
+      }
+
+      if (this.score >= 5000 && this.score < 10000) {
+        this.rank.setText(' Ace Pilot');
       }
 
  
