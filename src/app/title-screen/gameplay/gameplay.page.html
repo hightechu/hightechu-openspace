@@ -1,4 +1,30 @@
 <ion-content id="content">
-  <ion-button (click)="dataService.levelFailed()">This should open Death Screen</ion-button>
   <div id="phaser"></div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-title color="dark">Choose your color theme!</ion-title>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button class="colorButton" color="none" style="background: #A2BDD8" (click)="colorService.colorChanged('#A2BDD8')"></ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button class="colorButton" color="none" style="background: #EADDB1" (click)="colorService.colorChanged('#EADDB1')"></ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button class="colorButton" color="none" style="background: #D5AAA4" (click)="colorService.colorChanged('#D5AAA4')"></ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button class="colorButton" color="none" style="background: #9ebd6f" (click)="colorService.colorChanged('#9ebd6f')"></ion-button>
+      </ion-col>
+      <!-- 
+      <ion-col>
+        <ion-button class="colorButton" color="primary"></ion-button>
+      </ion-col>
+      -->
+    </ion-row>
+  </ion-grid>
 </ion-content>

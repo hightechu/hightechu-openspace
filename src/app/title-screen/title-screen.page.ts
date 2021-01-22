@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PopoverController } from '@ionic/angular';
 import { GameDataService } from '../game-data.service';
 
 @Component({
@@ -8,13 +9,16 @@ import { GameDataService } from '../game-data.service';
 })
 export class TitleScreenPage implements OnInit {
 
-  constructor(public dataService: GameDataService) { }
+  constructor(public dataService: GameDataService, public popupService: PopoverController) { }
 
   ngOnInit() {
   }
 
-  startGame() {
-    this.dataService.gameInstance.scene.start('GameScene');
+  startGameAgain() {
+    if (this.dataService.gameInstance) {
+      this.dataService.gameInstance.scene.start('GameScene', this.popupService); 
+    }
   }
+
 
 }

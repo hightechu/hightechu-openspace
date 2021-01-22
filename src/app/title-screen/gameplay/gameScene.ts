@@ -1,15 +1,6 @@
-import { Injectable} from '@angular/core';
-import { BehaviorSubject } from 'rxjs'; 
-
 import Phaser from 'phaser';
 
-@Injectable({
-  providedIn: 'root'
-})
-
-export class GameDataService extends Phaser.Scene {
-
-  gameInstance: Phaser.Game; 
+export class GameScene extends (Phaser.Scene as { new(config): any; }) {
  
   starmap1;
   starmap2;
@@ -44,20 +35,17 @@ export class GameDataService extends Phaser.Scene {
 
   currentEnemy;
 
-  popoverService; 
+  popoverFunction;
 
-  constructor() {
-      super({
-        key: "GameScene"
-      });
+  constructor(config, popover) {
+      super(config);
+      this.popoverFunction = popover; 
   }
 
 
   init(params): void {
-    this.popoverService = params; 
     this.score = 0; 
-    this.asteroidSpawnMultiplyer = 100;
-    this.timeSinceEnemySpawned = 0; 
+    this.popoverFunction('instructions'); 
   }
 
   preload(): void {
@@ -83,8 +71,6 @@ export class GameDataService extends Phaser.Scene {
   } // preload function
     
   create(): void {
-
-    
 
       const width = this.scale.width;
       const height = this.scale.height; 
@@ -233,31 +219,28 @@ export class GameDataService extends Phaser.Scene {
         this.ship.anims.play('straightLeft', true);
         
         //this.ship.anims.play('left', true);
-      } 
-      if (cursors.right.isDown) {
+      } else if (cursors.right.isDown) {
         this.ship.setVelocityX(275);
 
         //animation
         this.ship.anims.play('straightRight', true);
 
         //this.ship.anims.play('right', true);
-      } 
-       if (cursors.up.isDown) {
+      } else if (cursors.up.isDown) {
         this.ship.setVelocityY(-275);
 
         //animation
         this.ship.anims.play('straightUp', true);
 
         //this.ship.anims.play('straight', true);
-      } 
-       if (cursors.down.isDown) {
+      } else if (cursors.down.isDown) {
         this.ship.setVelocityY(275);
 
         //animation
         this.ship.anims.play('straightDown', true);
 
         //this.ship.anims.play('straight', true);
-      } if (!cursors.down.isDown && !cursors.up.isDown && !cursors.right.isDown && !cursors.left.isDown) {
+      } else {
         this.ship.setVelocityY(0);  
         this.ship.setVelocityX(0);
 
@@ -351,64 +334,64 @@ export class GameDataService extends Phaser.Scene {
  
   } // update function
 
-  // helping functions
-  
-  makeBar(x, y,color) {
-    //draw the bar
-    let bar = this.add.graphics();
-
-    //color the bar
-    bar.fillStyle(color, 1);
-
-    //fill the bar with a rectangle
-    bar.fillRect(0, 0, 124, 12);
+    // helping functions
     
-    //position the bar
-    bar.x = x;
-    bar.y = y;
+    makeBar(x, y,color) {
+        //draw the bar
+        let bar = this.add.graphics();
 
-    //return the bar
-    return bar;
-} // makeBar
+        //color the bar
+        bar.fillStyle(color, 1);
 
-// creates and asteroid in the group "asteroids" at a random x, and set it falling toward the bottom of the screen. 
-makeBigAsteroid() {
-    let x = Math.floor(Math.random() * this.scale.width) + 1;
-    let y = -20; 
-    let scale = (Math.floor(Math.random() * 100) + 40) / 100;
-    let speed = (Math.floor(Math.random() * 250) + 200);
-    const asteroid = this.asteroids.create(x, y, 'asteroid').setScale(scale);
-    asteroid.setVelocityY(speed);
-} // makeBigAsteroid
+        //fill the bar with a rectangle
+        bar.fillRect(0, 0, 124, 12);
+        
+        //position the bar
+        bar.x = x;
+        bar.y = y;
 
-// creates ship lasers at ship's x coordinate, moving upwards.
-makeShipLaser() {
-  let x = this.ship.x;
-  let y = this.ship.y - 54;
-  let scale = 1;
-  const shipLaser = this.shipLasers.create(x, y, 'shipLaser').setScale(scale); 
-  shipLaser.setVelocityY(-600);
-} // makeShipLaser
+        //return the bar
+        return bar;
+    } // makeBar
 
-makeEnemyShip() {
-  let x = 760;
-  let y = 100;
-  let scale = 1;
-  const enemyShip = this.enemyShips.create(x, y, 'enemyShip').setScale(scale);
-} // makeEnemyShip
+    // creates and asteroid in the group "asteroids" at a random x, and set it falling toward the bottom of the screen. 
+    makeBigAsteroid() {
+        let x = Math.floor(Math.random() * this.scale.width) + 1;
+        let y = -20; 
+        let scale = (Math.floor(Math.random() * 100) + 40) / 100;
+        let speed = (Math.floor(Math.random() * 250) + 200);
+        const asteroid = this.asteroids.create(x, y, 'asteroid').setScale(scale);
+        asteroid.setVelocityY(speed);
+    } // makeBigAsteroid
 
-makeEnemyLaser() {
-  let x = this.ship.x;
-  let y = -20;
-  let scale = 1;
-  const enemyLaser = this.enemyLasers.create(x, y, 'enemyLaser').setScale(scale); 
-  enemyLaser.setVelocityY(400);
-} // makeEnemyLaser
+    // creates ship lasers at ship's x coordinate, moving upwards.
+    makeShipLaser() {
+    let x = this.ship.x;
+    let y = this.ship.y - 54;
+    let scale = 1;
+    const shipLaser = this.shipLasers.create(x, y, 'shipLaser').setScale(scale); 
+    shipLaser.setVelocityY(-600);
+    } // makeShipLaser
 
-levelFailed() {
-  this.popoverService.popover('death'); 
-  this.scene.pause();
-}
+    makeEnemyShip() {
+    let x = 760;
+    let y = 100;
+    let scale = 1;
+    const enemyShip = this.enemyShips.create(x, y, 'enemyShip').setScale(scale);
+    } // makeEnemyShip
+
+    makeEnemyLaser() {
+    let x = this.ship.x;
+    let y = -20;
+    let scale = 1;
+    const enemyLaser = this.enemyLasers.create(x, y, 'enemyLaser').setScale(scale); 
+    enemyLaser.setVelocityY(400);
+    } // makeEnemyLaser
+
+    levelFailed() {
+
+    this.scene.pause();
+    }
 
 
 
