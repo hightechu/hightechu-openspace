@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 // local data/files
 import { dataModel } from './data.model'; 
 import { GameDataService } from 'src/app/game-data.service';
+import { PopupService } from 'src/app/popup.service';
 
 @Component({
   selector: 'app-popup',
@@ -14,10 +15,7 @@ export class PopupComponent implements OnInit {
   @Input() popover; 
   @Input() data: dataModel;
 
-
-
-  constructor(protected dataService: GameDataService) {
-  }
+  constructor(public dataService: GameDataService, public popoverService: PopupService) {}
 
   ngOnInit() {
     this.dataService.gameInstance.scene.pause('GameScene');
@@ -25,7 +23,7 @@ export class PopupComponent implements OnInit {
 
   // start's the players game
   startGame() {
-    this.dataService.gameInstance.scene.start('GameScene'); 
+    this.dataService.gameInstance.scene.start('GameScene', this.popoverService); 
     this.resetGameScene(); 
     this.closePopup(); 
   }
