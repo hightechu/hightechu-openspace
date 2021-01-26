@@ -9,7 +9,8 @@ import Phaser from 'phaser';
 
 export class GameDataService extends Phaser.Scene {
 
-  gameInstance: Phaser.Game; 
+  gameInstance: Phaser.Game;
+  game2: boolean = false;  
  
   starmap1;
   starmap2;
@@ -72,7 +73,7 @@ export class GameDataService extends Phaser.Scene {
     this.popoverService = params; 
     this.score = 0; 
     this.asteroidSpawnMultiplyer = 100;
-    this.timeSinceEnemySpawned = 0
+    this.timeSinceEnemySpawned = 0;
   }
 
   preload(): void {
@@ -108,7 +109,6 @@ export class GameDataService extends Phaser.Scene {
     
   create(): void {
 
-    
 
       const width = this.scale.width;
       const height = this.scale.height; 

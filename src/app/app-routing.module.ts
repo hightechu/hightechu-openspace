@@ -10,7 +10,8 @@ const routes: Routes = [
   {
     path: 'title-screen',
     loadChildren: () => import('./title-screen/title-screen.module').then( m => m.TitleScreenPageModule)
-  },
+  }
+
 ];
 
 @NgModule({

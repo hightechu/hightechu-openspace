@@ -6,13 +6,16 @@
     </ion-col>
   </ion-row>
   <ion-row>
-    <ion-col>
+    <ion-col *ngIf="data.text != ''">
       <ion-text>{{ data.text }}</ion-text>
+    </ion-col>
+    <ion-col *ngIf="data.text == ''">
+      <ion-text>{{ popoverService.message }}</ion-text>
     </ion-col>
   </ion-row>
   <ion-row>
     <ion-col *ngIf="data.button2 == 'titleScreen'">
-      <ion-button [routerLink]="['/', 'title-screen']" (click)="closePopup()">Return to TitleScreen</ion-button>
+      <ion-button [routerLink]="['/', 'title-screen']" (click)="titleScreen()">Return to TitleScreen</ion-button>
     </ion-col>
     <ion-col>
       <ion-button *ngIf="data.button1 == 'Start Game' || data.button1 == 'Restart'" (click)="startGame()"> {{ data.button1 }} </ion-button>

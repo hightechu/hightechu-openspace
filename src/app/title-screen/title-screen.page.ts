@@ -13,6 +13,8 @@ export class TitleScreenPage implements OnInit {
   constructor(public dataService: GameDataService, public popupService: PopupService) {}
 
   ngOnInit() {
+    const button = document.querySelector("ion-button"); 
+    setTimeout(() => {button.disabled = false}, 2000); 
   }
 
   startGameAgain() {

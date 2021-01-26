@@ -10,9 +10,11 @@ import { PopupComponent } from './title-screen/gameplay/popup/popup.component';
 })
 export class PopupService {
 
+  message: string = "";
+
   deathPopover = null; 
   checkpointPopover = null;
-  instructionsPopover = null;    
+  instructionsPopover = null;
   
   r = 38;
   g = 64;
@@ -30,7 +32,10 @@ export class PopupService {
     }
 
     // async function to control the potential popups for the game. This includes a deathscreen, instructions, and checkpoints
-    popover = async function presentPopover(type: string) {
+    popover = async function presentPopover(type: string) { 
+
+      //this.newMessage(); 
+      
       if (type == "death") {
         this.deathPopover = await this.popoverController.create({
           component: PopupComponent,
@@ -38,7 +43,7 @@ export class PopupService {
             popover: this.deathPopover, 
             data: {
               title: "Start again?",
-              text: "Message about failure", 
+              text: "", 
               button1: "Restart", 
               button2: "titleScreen"
             }
@@ -55,7 +60,7 @@ export class PopupService {
             popover: this.checkpointPopover,
             data: {
               title: "Checkpoint",
-              text: "Here is a encouraging message", 
+              text: "", 
               button1: "Keep Playing", 
               button2: "titleScreen"
             }
@@ -87,5 +92,20 @@ export class PopupService {
       }
   
     } // presentPopover
+
+
+    // HELP NOT WORKING YET 
+    newMessage() {
+      let random: number; 
+
+      fetch("https://type.fit/api/quotes")
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        random = Math.floor(Math.random() * data.length); 
+        this.message = `"${data[random].text}" - ${data[random].author}`;  
+      });
+    } // newMessage(); 
 
 }
