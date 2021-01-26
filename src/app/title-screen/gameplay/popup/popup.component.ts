@@ -18,7 +18,7 @@ export class PopupComponent implements OnInit {
   constructor(public dataService: GameDataService, public popoverService: PopupService) {}
 
   ngOnInit() {
-    this.dataService.gameInstance.scene.pause('GameScene');
+    this.dataService.gameInstance.scene.pause('GameScene', this.popoverService);
   }
 
   // start's the players game
@@ -30,8 +30,13 @@ export class PopupComponent implements OnInit {
   //continues the players game from where they left off
   continueGame() {
     this.closePopup(); 
-    this.dataService.gameInstance.scene.resume('GameScene');
+    this.dataService.gameInstance.scene.resume('GameScene', this.popoverService);
+  }
 
+  titleScreen() {
+    this.dataService.gameInstance.destroy(true); 
+    this.dataService.game2 = true; 
+    this.closePopup();
   }
 
 

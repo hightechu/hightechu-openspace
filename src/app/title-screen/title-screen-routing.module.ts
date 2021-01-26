@@ -11,6 +11,10 @@ const routes: Routes = [
   {
     path: 'gameplay',
     loadChildren: () => import('./gameplay/gameplay.module').then( m => m.GameplayPageModule)
+  }, 
+  {
+    path: 'credits',
+    loadChildren: () => import('./credits/credits.module').then( m => m.CreditsPageModule)
   }
 ];
 

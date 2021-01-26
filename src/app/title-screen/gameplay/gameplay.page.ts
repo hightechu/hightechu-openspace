@@ -45,15 +45,20 @@ export class GameplayPage implements OnInit {
             //gravity: { y: 300 },
             debug: false
         }
-      }
+      }, 
+      backgroundColor: '#26405a'
     }
 
     if (!this.gameInstance) {
-      this.gameInstance = new Phaser.Game(this.config);
-      this.dataService.gameInstance = this.gameInstance; 
-    } // if
-
-    this.popupService.popover("instructions"); 
+    this.gameInstance = new Phaser.Game(this.config);
+    this.dataService.gameInstance = this.gameInstance;
+    }
+     
+    if (this.dataService.game2 == false) {
+      this.popupService.popover('instructions');  
+    } else {
+      this.dataService.gameInstance.scene.start("GameScene", this.popupService); 
+    }
 
   } // ngOnInit
 
