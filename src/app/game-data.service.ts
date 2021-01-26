@@ -28,6 +28,7 @@ export class GameDataService extends Phaser.Scene {
 
   enemyZoneBoxLeft;
   enemyZoneBoxRight;
+  spawnDetector;
 
   enemyGoingLeft = null; 
   enemyGoingRight = null;
@@ -38,6 +39,8 @@ export class GameDataService extends Phaser.Scene {
   asteroidHitShip = null;
   currentShipLaser = null; 
   currentEnemyLaser = null;
+  currentEnemy = null;
+  currentLaserEnemy = null;
 
   // asteroid spawning timers
   timeSinceAsteroid = 0;
@@ -55,8 +58,6 @@ export class GameDataService extends Phaser.Scene {
   timeSinceEnemySpawned = 0;
   timeSinceEnemyDestroyed = 0;
   enemyDestroyed = true;
-
-  currentEnemy;
 
   popoverService; 
 
@@ -82,8 +83,12 @@ export class GameDataService extends Phaser.Scene {
       this.load.image('HUD', '../../../assets/sprites/hud.png');
       this.load.image('screenBorder', '../../../assets/sprites/screenBorder.png');
       this.load.image('enemyCollisionBox', '../../../assets/sprites/collideBox.png');
+      this.load.image('enemyCollisionBox', '../../../assets/sprites/spawnDetectorField.png');
 
-      this.load.image('enemyShip', '../../../assets/sprites/testEnemy.png');        
+      this.load.spritesheet('enemyShip', '../../../assets/sprites/enemyShipSheet.png',{
+        frameWidth: 68, 
+        frameHeight: 80
+       });       
 
       this.load.spritesheet('ship', '../../../assets/sprites/shipSheet3.png',{ 
         frameWidth: 68, 
@@ -101,7 +106,7 @@ export class GameDataService extends Phaser.Scene {
        });
 
        this.load.spritesheet('enemyLaser', '../../../assets/sprites/enemyLaser.png',{
-        frameWidth: 40, 
+        frameWidth: 48, 
         frameHeight: 32
        });
        
@@ -215,6 +220,26 @@ export class GameDataService extends Phaser.Scene {
           frameRate: 25,
           repeat: 1
         });
+
+        //enemy ship animations
+        this.anims.create({
+          key: 'enemyMoveLeft', 
+          frames: this.anims.generateFrameNumbers('enemyShip', { start: 4, end: 5 }),
+          frameRate: 10,
+          repeat: -1
+        });
+        this.anims.create({
+          key: 'enemyMoveRight',
+          frames: this.anims.generateFrameNumbers('enemyShip', { start: 2, end: 3 }),
+          frameRate: 10,
+          repeat: -1
+        });
+        this.anims.create({
+          key: 'enemyShipDestroyed',
+          frames: this.anims.generateFrameNumbers('enemyShip', { start: 6, end: 8 }),
+          frameRate: 25,
+          repeat: 1
+        });
       
       // asteroids group (start's empty)
       this.asteroids = this.physics.add.group();
@@ -234,11 +259,8 @@ export class GameDataService extends Phaser.Scene {
       // enemy ship group (start's empty)
       this.enemyShips = this.physics.add.group();
       this.physics.add.collider(this.shipLasers, this.enemyShips, function (shipLaser, enemyShip) {
+        this.currentEnemy = enemyShip;
         this.currentShipLaser = shipLaser; 
-        this.score += 200;
-        this.scoreText.setText(' ' + this.score);
-        this.enemyDestroyed = true;
-        enemyShip.destroy();
       }, null, this);
       
 
@@ -259,8 +281,15 @@ export class GameDataService extends Phaser.Scene {
         this.enemyGoingLeft = enemyShip;
       }, null, this);
 
+      this.spawnDetector = this.physics.add.group();
+      this.physics.add.collider(this.enemyShips, this.spawnDetector, function (enemyShip, topBox) {
+        //console.log("contact");
+        this.currentLaserEnemy = enemyShip;
+      }, null, this);
+
       this.enemyZoneBoxLeft = this.makeEnemyZoneBoxLeft();
       this.enemyZoneBoxRight = this.makeEnemyZoneBoxRight();
+      this.spawnDetector = this.makeSpawnDetector();
 
       //healthBar
       this.add.image(0, 0, 'HUD').setOrigin(0, 0).setScale(1); 
@@ -312,6 +341,21 @@ export class GameDataService extends Phaser.Scene {
       });
     }
 
+    //if enemy ship is shot by player
+    if (this.currentEnemy != null) {
+      this.currentEnemy.anims.play('enemyShipDestroyed', true);
+      this.currentEnemy.once("animationrepeat", () => {
+        if (this.currentEnemy != null) {
+          this.currentEnemy.destroy();
+          this.score += 200;
+          this.scoreText.setText(' ' + this.score);
+          this.enemyDestroyed = true;
+          this.currentEnemy = null;
+          this.currentLaserEnemy = null; 
+        }
+      });
+    }
+
     //if asteroid hits player ship
     if (this.asteroidHitShip != null) {
       this.asteroidHitShip.anims.play('asteroidExplode', true);
@@ -349,12 +393,14 @@ export class GameDataService extends Phaser.Scene {
 
     //basic enemy movement logic
     if (this.enemyGoingLeft != null) {
-      this.enemyGoingLeft.setVelocityX(-200);
+      this.enemyGoingLeft.anims.play('enemyMoveLeft', true);
+      this.enemyGoingLeft.setVelocityX(-200).setVelocityY(0);
       this.enemyGoingLeft = null;  
     }
 
     if (this.enemyGoingRight != null) {
-      this.enemyGoingRight.setVelocityX(200);
+      this.enemyGoingRight.anims.play('enemyMoveRight', true);
+      this.enemyGoingRight.setVelocityX(200).setVelocityY(0);
       this.enemyGoingRight = null;  
     }
 
@@ -422,20 +468,20 @@ export class GameDataService extends Phaser.Scene {
       }
       this.timeSincePoints++;
 
-      //enemy firing rate
-      if (this.timeSinceEnemyShot > 90) {
-        this.makeEnemyLaser();
-        this.timeSinceEnemyShot = 0; 
-      }
-      this.timeSinceEnemyShot++;
-
       //enemy spawn conditions
-      if (this.timeSinceEnemySpawned > 1800 && /*this.timeSinceEnemyDestroyed > 600 &&*/ this.enemyDestroyed == true) {
+      if (this.timeSinceEnemySpawned > 500 && /*this.timeSinceEnemyDestroyed > 600 &&*/ this.enemyDestroyed == true) {
         this.makeEnemyShip();
         this.timeSinceEnemySpawned = 0;
         this.enemyDestroyed = false;
       }
       this.timeSinceEnemySpawned++;
+
+      //laser generation conditions
+      if (this.currentLaserEnemy != null && this.timeSinceEnemyShot > 90) {
+        this.makeEnemyLaser();
+        this.timeSinceEnemyShot = 0; 
+      }
+      this.timeSinceEnemyShot++;
 
       // asteroids spawning
       if (this.timeSinceAsteroid > this.randomAsteroidSpawnTime) {
@@ -463,12 +509,25 @@ export class GameDataService extends Phaser.Scene {
         this.levelFailed(); 
       }
 
-      if (this.score >= 100 && this.score < 5000) {
+      //rank system
+      if (this.score >= 0 && this.score < 100) {
+        this.rank.setText(' None');
+      }
+
+      if (this.score >= 100 && this.score < 2500) {
         this.rank.setText(' Rookie Pilot');
+      }
+
+      if (this.score >= 2500 && this.score < 5000) {
+        this.rank.setText(' Skilled Pilot');
       }
 
       if (this.score >= 5000 && this.score < 10000) {
         this.rank.setText(' Ace Pilot');
+      }
+
+      if (this.score >= 10000) {
+        this.rank.setText(' Master Pilot');
       }
 
  
@@ -552,16 +611,16 @@ makeShipLaser() {
 //creates enemy ships
 makeEnemyShip() {
   let x = 500;
-  let y = 100;
+  let y = -300;
   let scale = 1;
   const enemyShip = this.enemyShips.create(x, y, 'enemyShip').setScale(scale);
-  enemyShip.setVelocityX(200);
+  enemyShip.setVelocityX(-300||300).setVelocityY(265);
 } // makeEnemyShip
 
 //generates enemy lasers, currently at the ship's x value
 makeEnemyLaser() {
-  let x = this.ship.x;
-  let y = -20;
+  let x = this.currentLaserEnemy.x;
+  let y = this.currentLaserEnemy.y + 54;
   let scale = 1;
   const enemyLaser = this.enemyLasers.create(x, y, 'enemyLaser').setScale(scale); 
   enemyLaser.setVelocityY(400);
@@ -581,6 +640,20 @@ makeEnemyZoneBoxRight() {
   let scale = 1;
   const rightBox = this.enemyZoneBoxRight.create(x, y, 'enemyCollisionBox').setScale(scale).setImmovable(true);
 } // makeEnemyCollideBox (Right)
+
+makeSpawnDetector() {
+  let x = 500;
+  let y = -300;
+  let scale = 50;
+  const topBox = this.spawnDetector.create(x, y, 'enemyCollisionBox').setScale(scale).setImmovable(true); 
+}
+
+/*makeSpawnDetector() {
+  let x = -100;
+  let y = -500;
+  let scale = 1;
+  const topBox = this.spawnDetector.create(x, y, 'spawnDetectorField').setScale(scale).setImmovable(true); 
+}*/
 
 //if HP = 0
 levelFailed() {
