@@ -12,6 +12,8 @@ export class PopupService {
 
   message: string = "";
 
+  instructions = true; 
+
   deathPopover = null; 
   checkpointPopover = null;
   instructionsPopover = null;
@@ -20,7 +22,7 @@ export class PopupService {
   g = 64;
   b = 90;
 
-  constructor(public popoverController: PopoverController) { }
+  constructor(public popoverController: PopoverController, public dataService: GameDataService) { }
 
     colorChanged(hex: string) {
       switch(hex) {
@@ -33,9 +35,7 @@ export class PopupService {
 
     // async function to control the potential popups for the game. This includes a deathscreen, instructions, and checkpoints
     popover = async function presentPopover(type: string) { 
-
-      //this.newMessage(); 
-      
+       
       if (type == "death") {
         this.deathPopover = await this.popoverController.create({
           component: PopupComponent,
@@ -43,7 +43,7 @@ export class PopupService {
             popover: this.deathPopover, 
             data: {
               title: "Start again?",
-              text: "", 
+              text: await this.newMessage(), 
               button1: "Restart", 
               button2: "titleScreen"
             }
@@ -60,7 +60,7 @@ export class PopupService {
             popover: this.checkpointPopover,
             data: {
               title: "Checkpoint",
-              text: "", 
+              text: await this.newMessage(), 
               button1: "Keep Playing", 
               button2: "titleScreen"
             }
@@ -87,25 +87,24 @@ export class PopupService {
           backdropDismiss: false
         });
         return await this.instructionsPopover.present();
-
-  
       }
   
     } // presentPopover
 
-
-    // HELP NOT WORKING YET 
-    newMessage() {
+   async newMessage() {
       let random: number; 
+      let message; 
 
-      fetch("https://type.fit/api/quotes")
+      await fetch("https://type.fit/api/quotes")
       .then(function(response) {
         return response.json();
       })
       .then(function(data) {
         random = Math.floor(Math.random() * data.length); 
-        this.message = `"${data[random].text}" - ${data[random].author}`;  
+        message = `"${data[random].text}" - ${data[random].author}`;  
       });
+
+      return message; 
     } // newMessage(); 
 
 }

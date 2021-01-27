@@ -1,6 +1,5 @@
 // Angular/ionic featres
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs'; 
 // external libraries
 import Phaser from 'phaser';
 import { PopupService } from '../../popup.service';
@@ -46,12 +45,12 @@ export class GameplayPage implements OnInit {
             debug: false
         }
       }, 
-      backgroundColor: '#26405a'
+      backgroundColor: `rgb(${this.popupService.r}, ${this.popupService.g}, ${this.popupService.b})` 
     }
 
     if (!this.gameInstance) {
-    this.gameInstance = new Phaser.Game(this.config);
-    this.dataService.gameInstance = this.gameInstance;
+      this.gameInstance = new Phaser.Game(this.config);
+      this.dataService.gameInstance = this.gameInstance;
     }
      
     if (this.dataService.game2 == false) {

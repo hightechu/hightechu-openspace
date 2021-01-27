@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameDataService } from 'src/app/game-data.service';
 
 @Component({
   selector: 'app-credits',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CreditsPage implements OnInit {
 
-  constructor() { }
+  constructor(public dataService: GameDataService) { }
 
   ngOnInit() {
   }

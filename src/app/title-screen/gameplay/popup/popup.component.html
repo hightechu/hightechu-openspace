@@ -1,5 +1,5 @@
 
-<ion-grid>
+<ion-grid id="mainGrid">
   <ion-row>
     <ion-col>
       <ion-title>{{ data.title }}</ion-title>
@@ -18,7 +18,7 @@
       <ion-button [routerLink]="['/', 'title-screen']" (click)="titleScreen()">Return to TitleScreen</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button *ngIf="data.button1 == 'Start Game' || data.button1 == 'Restart'" (click)="startGame()"> {{ data.button1 }} </ion-button>
+      <ion-button id="instructions" *ngIf="data.button1 == 'Start Game' || data.button1 == 'Restart'" (click)="startGame()" [disabled]="isDisabled"> {{ data.button1 }} </ion-button>
       <ion-button *ngIf="data.button1 == 'Keep Playing'" (click)="continueGame()"> {{ data.button1 }} </ion-button>
     </ion-col>
   </ion-row>

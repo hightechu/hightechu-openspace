@@ -2,7 +2,7 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-        <ion-button class="back" strong=true [routerLink]="['/', 'title-screen']"><ion-icon name="caret-back-outline"></ion-icon>Back</ion-button>
+        <ion-button class="back" strong=true [routerLink]="['/', 'title-screen']" (click)="this.dataService.buttonPlay()"><ion-icon name="caret-back-outline"></ion-icon>Back</ion-button>
       </ion-col>
     </ion-row>
     <ion-row>
