@@ -31,3 +31,10 @@ ion-row {
     margin-right: auto; 
     position: relative;
 }
+
+#cover {
+    background: var(--ion-color-theme);
+    width: 100%;
+    height: 100%; 
+    position: absolute;
+}

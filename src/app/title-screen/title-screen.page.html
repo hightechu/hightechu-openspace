@@ -12,7 +12,7 @@
         
         <ion-row>
             <ion-col>
-                <ion-button id="start" strong=true [routerLink]="['/', 'title-screen', 'gameplay']" disabled=true>Start Game</ion-button>
+                <ion-button id="start" strong=true [routerLink]="['/', 'title-screen', 'gameplay']" disabled=false (click)="this.dataService.buttonPlay()">Start Game</ion-button>
             </ion-col>
         </ion-row>
         
@@ -20,7 +20,7 @@
 
         <ion-row>
             <ion-col>
-                <ion-button id="options" strong=true [routerLink]="['/', 'title-screen', 'credits']" disabled=false>Credits</ion-button>
+                <ion-button id="options" strong=true [routerLink]="['/', 'title-screen', 'credits']" disabled=false (click)="this.dataService.buttonPlay()">Credits</ion-button>
             </ion-col>
         </ion-row>
     </ion-grid>

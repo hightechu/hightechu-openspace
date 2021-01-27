@@ -12,6 +12,7 @@ export class GameDataService extends Phaser.Scene {
   gameInstance: Phaser.Game;
   game2: boolean = false;  
  
+  // background and player
   starmap1;
   starmap2;
   ship; 
@@ -33,8 +34,8 @@ export class GameDataService extends Phaser.Scene {
   enemyGoingLeft = null; 
   enemyGoingRight = null;
 
+  // current enemy objects
   enemyLasers; 
-
   currentAsteroid = null;
   asteroidHitShip = null;
   currentShipLaser = null; 
@@ -51,17 +52,23 @@ export class GameDataService extends Phaser.Scene {
   canShoot = true;
   timeSinceShot = 0;
 
-
+  // points managment
   timeSincePoints = 0;
   timeSinceEnemyShot = 0;
 
+  // enemy spawning managment
   timeSinceEnemySpawned = 0;
   timeSinceEnemyDestroyed = 0;
   enemyDestroyed = true;
 
-  popoverService; 
+  // audio managment
+  soundtrack; 
+  shipLaserSFX;
+  enemyLaserSFX;
+  rankSFX;
+  explosinoSFX; 
 
-  colorCounter = 0; 
+  popoverService = null; 
 
   constructor() {
       super({
@@ -71,7 +78,9 @@ export class GameDataService extends Phaser.Scene {
 
 
   init(params): void {
-    this.popoverService = params; 
+    if (params) {
+      this.popoverService = params;
+    } 
     this.score = 0; 
     this.asteroidSpawnMultiplyer = 100;
     this.timeSinceEnemySpawned = 0;
@@ -109,11 +118,18 @@ export class GameDataService extends Phaser.Scene {
         frameWidth: 48, 
         frameHeight: 32
        });
+
+       // audio loading
+       this.load.audio('soundtrack', ['../../../assets/audio/soundtrack1.mp3']); 
+
+       this.load.audio('shipLaser', ['../../../assets/audio/ShipLaser.wav']); 
+       this.load.audio('enemyLaser', ['../../../assets/audio/EnemyLaser.wav']); 
+       this.load.audio('rank', ['../../../assets/audio/rank.wav']); 
+       this.load.audio('explosion', ['../../../assets/audio/ExplosionSFX.wav']); 
        
   } // preload function
     
   create(): void {
-
 
       const width = this.scale.width;
       const height = this.scale.height; 
@@ -121,6 +137,14 @@ export class GameDataService extends Phaser.Scene {
       this.starmap1 = this.add.tileSprite(0, 0, width, height, 'stars1').setOrigin(0, 0);
       this.starmap2 = this.add.tileSprite(0, 0, width*2, height*2, 'stars2').setOrigin(0, 0).setScale(0.5);
       
+      // audio creation
+      this.soundtrack = this.sound.add('soundtrack', {loop: true, volume: 0.005});
+
+      this.shipLaserSFX = this.sound.add('shipLaser', {loop: false, volume: 0.09}); 
+      this.enemyLaserSFX = this.sound.add('enemyLaser', {loop: false, volume: 0.09}); 
+      this.rankSFX = this.sound.add('rank', {loop: false, volume: 0.09});  
+      this.explosinoSFX = this.sound.add('explosion', {loop: false, volume: 0.09});  
+      this.soundtrack.play(); 
 
       // player
       this.ship = this.physics.add.sprite(400, 550, 'ship').setScale(1);
@@ -251,6 +275,7 @@ export class GameDataService extends Phaser.Scene {
       // ship laser group (start's empty)
       this.shipLasers = this.physics.add.group();
       this.physics.add.collider(this.shipLasers, this.asteroids, function (shipLaser, asteroid) {
+        this.explosinoSFX.play(); 
         this.currentAsteroid = asteroid;
         this.currentShipLaser = shipLaser; 
       }, null, this);
@@ -259,6 +284,7 @@ export class GameDataService extends Phaser.Scene {
       // enemy ship group (start's empty)
       this.enemyShips = this.physics.add.group();
       this.physics.add.collider(this.shipLasers, this.enemyShips, function (shipLaser, enemyShip) {
+        this.explosinoSFX.play(); 
         this.currentEnemy = enemyShip;
         this.currentShipLaser = shipLaser; 
       }, null, this);
@@ -294,7 +320,7 @@ export class GameDataService extends Phaser.Scene {
       //healthBar
       this.add.image(0, 0, 'HUD').setOrigin(0, 0).setScale(1); 
       this.healthBar = this.makeBar(114, 18, 0x2FF875);
-      this.healthBar.scaleX = 1;
+      this.healthBar.scaleX = 0.2;
 
       //score counter number
       this.scoreText = this.add.text(384, 12, ' 0', {fontSize: '24px', color: 'white'});
@@ -314,13 +340,8 @@ export class GameDataService extends Phaser.Scene {
 
   update(time): void {
 
-    // background color change
-    if (this.colorCounter > 20) {
-      //this.startColor++; 
       this.cameras.main.setBackgroundColor(`rgb(${this.popoverService.r}, ${this.popoverService.g}, ${this.popoverService.b})`);
-      this.colorCounter = 0; 
-    } 
-    this.colorCounter++; 
+
 
     // checkpoint popup every 1000 points gained
     if (this.score > 500*this.checkpoint) {
@@ -505,8 +526,9 @@ export class GameDataService extends Phaser.Scene {
       }
 
       // level is failed if healthbar is gone
-      if (this.healthBar.scaleX <= 0.1) {
-        this.levelFailed(); 
+      if (this.healthBar.scaleX < 0.05) {
+        this.levelFailed();
+        this.scene.pause();  
       }
 
       //rank system
@@ -516,18 +538,22 @@ export class GameDataService extends Phaser.Scene {
 
       if (this.score >= 100 && this.score < 2500) {
         this.rank.setText(' Rookie Pilot');
+        this.rankSFX.play(); 
       }
 
       if (this.score >= 2500 && this.score < 5000) {
         this.rank.setText(' Skilled Pilot');
+        this.rankSFX.play(); 
       }
 
       if (this.score >= 5000 && this.score < 10000) {
         this.rank.setText(' Ace Pilot');
+        this.rankSFX.play(); 
       }
 
       if (this.score >= 10000) {
         this.rank.setText(' Master Pilot');
+        this.rankSFX.play(); 
       }
 
  
@@ -553,41 +579,6 @@ export class GameDataService extends Phaser.Scene {
     return bar;
 } // makeBar
 
-/*makeEnemyZoneBoxLeft(x, y,color) {
-  //draw the bar
-  let bar = this.add.graphics();
-
-  //color the bar
-  bar.fillStyle(color, 1);
-
-  //fill the bar with a rectangle
-  bar.fillRect(0, 0, 25, 150);
-  
-  //position the bar
-  bar.x = x;
-  bar.y = y;
-
-  //return the bar
-  return bar;
-} // makeBar
-
-makeEnemyZoneBoxRight(x, y,color) {
-  //draw the bar
-  let bar = this.add.graphics();
-
-  //color the bar
-  bar.fillStyle(color, 1);
-
-  //fill the bar with a rectangle
-  bar.fillRect(0, 0, 25, 150);
-  
-  //position the bar
-  bar.x = x;
-  bar.y = y;
-
-  //return the bar
-  return bar;
-} // makeBar*/
 
 // creates and asteroid in the group "asteroids" at a random x, and set it falling toward the bottom of the screen. 
 makeBigAsteroid() {
@@ -606,6 +597,7 @@ makeShipLaser() {
   let scale = 1;
   const shipLaser = this.shipLasers.create(x, y, 'shipLaser').setScale(scale); 
   shipLaser.setVelocityY(-600);
+  this.shipLaserSFX.play(); 
 } // makeShipLaser
 
 //creates enemy ships
@@ -624,6 +616,7 @@ makeEnemyLaser() {
   let scale = 1;
   const enemyLaser = this.enemyLasers.create(x, y, 'enemyLaser').setScale(scale); 
   enemyLaser.setVelocityY(400);
+  this.enemyLaserSFX.play(); 
 } // makeEnemyLaser
 
 //invisible collision boxes for enemies
@@ -657,7 +650,17 @@ makeSpawnDetector() {
 
 //if HP = 0
 levelFailed() {
-  this.popoverService.popover('death'); 
+  console.log(this.popoverService)
+  if (this.popoverService != null) {
+    this.popoverService.popover('death');
+  } 
+}
+
+// audio button sound
+buttonPlay() {
+  const audio = document.querySelector("audio"); 
+  audio.volume = 0.1; 
+  audio.play(); 
 }
 
 } // gameScene class
