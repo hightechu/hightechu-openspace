@@ -42,6 +42,7 @@ export class GameDataService extends Phaser.Scene {
   currentEnemyLaser = null;
   currentEnemy = null;
   currentLaserEnemy = null;
+  shipHitEnemy = null;
 
   // asteroid spawning timers
   timeSinceAsteroid = 0;
@@ -298,8 +299,12 @@ export class GameDataService extends Phaser.Scene {
         this.currentEnemy = enemyShip;
         this.currentShipLaser = shipLaser; 
       }, null, this);
+      this.physics.add.collider(this.ship, this.enemyShips, function (player, enemyShip) {
+        this.takeDamageSFX.play();
+        this.explosionSFX.play();
+        this.shipHitEnemy = enemyShip;
+      }, null, this);
       
-
       // enemy laser group (start's empty)
       this.enemyLasers = this.physics.add.group();
       this.physics.add.collider(this.ship, this.enemyLasers, function (player, enemyLaser) {
@@ -397,6 +402,20 @@ export class GameDataService extends Phaser.Scene {
           this.asteroidHitShip.destroy();
           this.healthBar.scaleX = this.healthBar.scaleX-0.1;
           this.asteroidHitShip = null;  
+        }
+      });
+    }
+
+    //if player hits enemy ship
+    if (this.shipHitEnemy != null) {
+      this.shipHitEnemy.anims.play('enemyShipDestroyed', true);
+      this.shipHitEnemy.once("animationrepeat", () => {
+        if (this.shipHitEnemy != null) {
+          this.shipHitEnemy.destroy();
+          this.healthBar.scaleX = this.healthBar.scaleX-0.1;
+          this.enemyDestroyed = true;
+          this.currentLaserEnemy = null; 
+          this.shipHitEnemy = null;  
         }
       });
     }
@@ -510,7 +529,7 @@ export class GameDataService extends Phaser.Scene {
       this.timeSinceEnemySpawned++;
 
       //laser generation conditions
-      if (this.currentLaserEnemy != null && this.timeSinceEnemyShot > 90) {
+      if (this.currentLaserEnemy != null && this.timeSinceEnemyShot > 60) {
         this.makeEnemyLaser();
         this.timeSinceEnemyShot = 0; 
       }
@@ -613,11 +632,19 @@ makeShipLaser() {
 
 //creates enemy ships
 makeEnemyShip() {
-  let x = 500;
+  let x = 400;
   let y = -300;
   let scale = 1;
-  const enemyShip = this.enemyShips.create(x, y, 'enemyShip').setScale(scale);
-  enemyShip.setVelocityX(-300||300).setVelocityY(265);
+  let leftRight = (Math.floor(Math.random() * 2) + 1);
+  if (leftRight == 1) {
+    let speed = -300;
+    const enemyShip = this.enemyShips.create(x, y, 'enemyShip').setScale(scale);
+  enemyShip.setVelocityX(speed).setVelocityY(350);
+  } else {
+    let speed = 300;
+    const enemyShip = this.enemyShips.create(x, y, 'enemyShip').setScale(scale);
+  enemyShip.setVelocityX(speed).setVelocityY(350);
+  }
 } // makeEnemyShip
 
 //generates enemy lasers, currently at the ship's x value
