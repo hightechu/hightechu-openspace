@@ -17,6 +17,7 @@ export class PopupService {
   deathPopover = null; 
   cpPopover = null;
   instructionsPopover = null;
+  pausePopover = null; 
   
   r = 38;
   g = 64;
@@ -24,13 +25,16 @@ export class PopupService {
 
   constructor(public popoverController: PopoverController, public dataService: GameDataService) { }
 
-    colorChanged(hex: string) {
-      switch(hex) {
+    colorChanged(newColor: string) {
+      this.dataService.buttonPlay(); 
+      document.documentElement.style.setProperty('--ion-color-theme', newColor);
+      
+      switch(newColor) {
         case "#dfca86": this.r = 125; this.g = 100; this.b = 28; break;
         case "#D5AAA4": this.r = 140; this.g = 73; this.b = 64; break;
         case "#9ebd6f": this.r = 55; this.g = 70; this.b = 32; break;
         default: this.r = 38; this.g = 64; this.b = 90; break; 
-      }
+      } 
     }
 
     // async function to control the potential popups for the game. This includes a deathscreen, instructions, and checkpoints
@@ -87,6 +91,23 @@ export class PopupService {
           backdropDismiss: false
         });
         return await this.instructionsPopover.present();
+      } else if (type == "pause") {
+        this.pausePopover = await this.popoverController.create({
+          component: PopupComponent,
+          componentProps: {
+            popover: this.pausePopover,
+            data: {
+              title: "Game Paused",
+              text: "Take a deep breath...", 
+              button1: "Keep Playing", 
+              button2: "titleScreen"
+            }
+          },  
+          cssClass: 'my-custom-popup',
+          translucent: true, 
+          backdropDismiss: false
+        });
+        return await this.pausePopover.present();
       }
   
     } // presentPopover

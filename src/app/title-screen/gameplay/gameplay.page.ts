@@ -6,7 +6,6 @@ import { PopupService } from '../../popup.service';
 
 // local classes/files
 import { GameDataService } from '../../game-data.service'; 
-import { ColorsService } from 'src/app/colors.service';
 
 @Component({
   selector: 'app-gameplay',
@@ -18,7 +17,7 @@ export class GameplayPage implements OnInit {
   gameInstance: any;
   config: Phaser.Types.Core.GameConfig; // phaser configuration object
 
-  constructor(public dataService: GameDataService, public popupService: PopupService, public colorService: ColorsService) {}
+  constructor(public dataService: GameDataService, public popupService: PopupService) {}
 
   ngOnInit() {
 
@@ -60,6 +59,13 @@ export class GameplayPage implements OnInit {
     }
 
   } // ngOnInit
+
+  pause() {
+    this.dataService.buttonPlay(); 
+    this.popupService.popover('pause')
+  }
+
+
 
 } // end of class "GameplayPage"
 
