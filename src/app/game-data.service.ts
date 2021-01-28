@@ -66,7 +66,10 @@ export class GameDataService extends Phaser.Scene {
   shipLaserSFX;
   enemyLaserSFX;
   rankSFX;
-  explosinoSFX; 
+  explosionSFX;
+  takeDamageSFX;
+  popUpSFX;
+  gameOverSFX; 
 
   popoverService = null; 
 
@@ -122,10 +125,13 @@ export class GameDataService extends Phaser.Scene {
        // audio loading
        this.load.audio('soundtrack', ['../../../assets/audio/soundtrack1.mp3']); 
 
-       this.load.audio('shipLaser', ['../../../assets/audio/ShipLaser.wav']); 
-       this.load.audio('enemyLaser', ['../../../assets/audio/EnemyLaser.wav']); 
-       this.load.audio('rank', ['../../../assets/audio/rank.wav']); 
-       this.load.audio('explosion', ['../../../assets/audio/ExplosionSFX.wav']); 
+       this.load.audio('shipLaser', ['../../../assets/audio/shipLaser.wav']);
+       this.load.audio('explosion', ['../../../assets/audio/explosion.wav']);
+       this.load.audio('takeDamage', ['../../../assets/audio/takeDamage.wav']); 
+       this.load.audio('enemyLaser', ['../../../assets/audio/enemyLaser.wav']);
+       this.load.audio('rankUp', ['../../../assets/audio/rankUp.wav']);
+       this.load.audio('popUp', ['../../../assets/audio/popUp.wav']);
+       this.load.audio('gameOver', ['../../../assets/audio/gameOver.wav']);
        
   } // preload function
     
@@ -138,12 +144,15 @@ export class GameDataService extends Phaser.Scene {
       this.starmap2 = this.add.tileSprite(0, 0, width*2, height*2, 'stars2').setOrigin(0, 0).setScale(0.5);
       
       // audio creation
-      this.soundtrack = this.sound.add('soundtrack', {loop: true, volume: 0.005});
+      this.soundtrack = this.sound.add('soundtrack', {loop: true, volume: 0.015}); 
+      this.shipLaserSFX = this.sound.add('shipLaser', {loop: false, volume: 0.15});
+      this.explosionSFX = this.sound.add('explosion', {loop: false, volume: 0.15});
+      this.takeDamageSFX = this.sound.add('takeDamage', {loop: false, volume: 0.15});
+      this.enemyLaserSFX = this.sound.add('enemyLaser', {loop: false, volume: 0.15});
+      this.rankSFX = this.sound.add('rankUp', {loop: false, volume: 0.15});
+      this.popUpSFX = this.sound.add('popUp', {loop: false, volume: 0.15});
+      this.gameOverSFX = this.sound.add('gameOver', {loop: false, volume: 0.15});
 
-      this.shipLaserSFX = this.sound.add('shipLaser', {loop: false, volume: 0.09}); 
-      this.enemyLaserSFX = this.sound.add('enemyLaser', {loop: false, volume: 0.09}); 
-      this.rankSFX = this.sound.add('rank', {loop: false, volume: 0.09});  
-      this.explosinoSFX = this.sound.add('explosion', {loop: false, volume: 0.09});  
       this.soundtrack.play(); 
 
       // player
@@ -268,6 +277,7 @@ export class GameDataService extends Phaser.Scene {
       // asteroids group (start's empty)
       this.asteroids = this.physics.add.group();
       this.physics.add.collider(this.ship, this.asteroids, function (player, asteroid) {
+        this.takeDamageSFX.play();
         this.asteroidHitShip = asteroid;
       }, null, this);
 
@@ -275,7 +285,7 @@ export class GameDataService extends Phaser.Scene {
       // ship laser group (start's empty)
       this.shipLasers = this.physics.add.group();
       this.physics.add.collider(this.shipLasers, this.asteroids, function (shipLaser, asteroid) {
-        this.explosinoSFX.play(); 
+        this.explosionSFX.play(); 
         this.currentAsteroid = asteroid;
         this.currentShipLaser = shipLaser; 
       }, null, this);
@@ -284,7 +294,7 @@ export class GameDataService extends Phaser.Scene {
       // enemy ship group (start's empty)
       this.enemyShips = this.physics.add.group();
       this.physics.add.collider(this.shipLasers, this.enemyShips, function (shipLaser, enemyShip) {
-        this.explosinoSFX.play(); 
+        this.explosionSFX.play();
         this.currentEnemy = enemyShip;
         this.currentShipLaser = shipLaser; 
       }, null, this);
@@ -293,6 +303,7 @@ export class GameDataService extends Phaser.Scene {
       // enemy laser group (start's empty)
       this.enemyLasers = this.physics.add.group();
       this.physics.add.collider(this.ship, this.enemyLasers, function (player, enemyLaser) {
+        this.takeDamageSFX.play(); 
         this.currentEnemyLaser = enemyLaser; 
       }, null, this);
 
@@ -320,7 +331,7 @@ export class GameDataService extends Phaser.Scene {
       //healthBar
       this.add.image(0, 0, 'HUD').setOrigin(0, 0).setScale(1); 
       this.healthBar = this.makeBar(114, 18, 0x2FF875);
-      this.healthBar.scaleX = 0.2;
+      this.healthBar.scaleX = 1;
 
       //score counter number
       this.scoreText = this.add.text(384, 12, ' 0', {fontSize: '24px', color: 'white'});
@@ -345,6 +356,7 @@ export class GameDataService extends Phaser.Scene {
 
     // checkpoint popup every 1000 points gained
     if (this.score > 500*this.checkpoint) {
+      this.popUpSFX.play();
       this.popoverService.popover("checkpoint"); 
       this.checkpoint++; 
     }
@@ -475,7 +487,7 @@ export class GameDataService extends Phaser.Scene {
         this.makeShipLaser();
         this.canShoot = false;  
       }
-      if (this.timeSinceShot > 30) {
+      if (this.timeSinceShot > 60) {
         this.canShoot = true;
         this.timeSinceShot = 0; 
       }
@@ -516,6 +528,31 @@ export class GameDataService extends Phaser.Scene {
       }
       this.timeSinceAsteroid++; 
 
+      //rank system
+      if (this.score >= 0 && this.score < 100) {
+        this.rank.setText(' None');
+      }
+
+      if (this.score >= 100 && this.score < 2500) {
+        this.rank.setText(' Rookie Pilot');
+        //this.rankSFX.play(); 
+      }
+
+      if (this.score >= 2500 && this.score < 5000) {
+        this.rank.setText(' Skilled Pilot');
+        //this.rankSFX.play();
+      }
+
+      if (this.score >= 5000 && this.score < 10000) {
+        this.rank.setText(' Ace Pilot');
+        //this.rankSFX.play();
+      }
+
+      if (this.score >= 10000) {
+        this.rank.setText(' Master Pilot');
+        //this.rankSFX.play();
+      }
+
       // health bar changes color as it gets smaller
       if (this.healthBar.scaleX <= 0.6 && this.healthBar.scaleX > 0.3) {
         this.healthBar.fillStyle("0xE56F0D", 1);
@@ -530,32 +567,6 @@ export class GameDataService extends Phaser.Scene {
         this.levelFailed();
         this.scene.pause();  
       }
-
-      //rank system
-      if (this.score >= 0 && this.score < 100) {
-        this.rank.setText(' None');
-      }
-
-      if (this.score >= 100 && this.score < 2500) {
-        this.rank.setText(' Rookie Pilot');
-        this.rankSFX.play(); 
-      }
-
-      if (this.score >= 2500 && this.score < 5000) {
-        this.rank.setText(' Skilled Pilot');
-        this.rankSFX.play(); 
-      }
-
-      if (this.score >= 5000 && this.score < 10000) {
-        this.rank.setText(' Ace Pilot');
-        this.rankSFX.play(); 
-      }
-
-      if (this.score >= 10000) {
-        this.rank.setText(' Master Pilot');
-        this.rankSFX.play(); 
-      }
-
  
   } // update function
 
@@ -652,7 +663,11 @@ makeSpawnDetector() {
 levelFailed() {
   console.log(this.popoverService)
   if (this.popoverService != null) {
+    this.gameOverSFX.play();
     this.popoverService.popover('death');
+    this.enemyDestroyed = true;
+    this.currentEnemy = null;
+    this.currentLaserEnemy = null;
   } 
 }
 

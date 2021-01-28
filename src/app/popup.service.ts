@@ -15,7 +15,7 @@ export class PopupService {
   instructions = true; 
 
   deathPopover = null; 
-  checkpointPopover = null;
+  cpPopover = null;
   instructionsPopover = null;
   
   r = 38;
@@ -54,10 +54,10 @@ export class PopupService {
         });
         return await this.deathPopover.present();
       } else if (type == "checkpoint") {
-        this.checkpointPopover = await this.popoverController.create({
+        this.cpPopover = await this.popoverController.create({
           component: PopupComponent,
           componentProps: {
-            popover: this.checkpointPopover,
+            popover: this.cpPopover, 
             data: {
               title: "Checkpoint",
               text: await this.newMessage(), 
@@ -69,7 +69,7 @@ export class PopupService {
           translucent: true, 
           backdropDismiss: false
         });
-        return await this.checkpointPopover.present();
+        return await this.cpPopover.present();
       } else if (type == "instructions") {
         this.instructionsPopover = await this.popoverController.create({
           component: PopupComponent,
@@ -77,7 +77,7 @@ export class PopupService {
             popover: this.instructionsPopover,
             data: {
               title: "Instructions",
-              text: "Here are the instructions", 
+              text: "Welcome to Open Space! In this game, you take on the role of a space pilot flying through an asteroid field, eliminating any enemies you encounter along the way. Use the arrow keys to move your ship around the screen, and press the spacebar to fire your ship's lasers. Good luck!", 
               button1: "Start Game", 
               button2: "null"
             }
