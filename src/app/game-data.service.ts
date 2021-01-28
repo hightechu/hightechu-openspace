@@ -126,10 +126,10 @@ export class GameDataService extends Phaser.Scene {
        // audio loading
        this.load.audio('soundtrack', ['../../../assets/audio/soundtrack1.mp3']); 
 
-       this.load.audio('shipLaser', ['../../../assets/audio/ShipLaser.wav']);
+       this.load.audio('shipLaser', ['../../../assets/audio/shipLaser.wav']);
        this.load.audio('explosion', ['../../../assets/audio/explosion.wav']);
        this.load.audio('takeDamage', ['../../../assets/audio/takeDamage.wav']); 
-       this.load.audio('enemyLaser', ['../../../assets/audio/EnemyLaser.wav']);
+       this.load.audio('enemyLaser', ['../../../assets/audio/enemyLaser.wav']);
        this.load.audio('rankUp', ['../../../assets/audio/rankUp.wav']);
        this.load.audio('popUp', ['../../../assets/audio/popUp.wav']);
        this.load.audio('gameOver', ['../../../assets/audio/gameOver.wav']);
@@ -339,10 +339,10 @@ export class GameDataService extends Phaser.Scene {
       this.healthBar.scaleX = 1;
 
       //score counter number
-      this.scoreText = this.add.text(384, 12, ' 0', {fontSize: '24px', color: 'white'});
+      this.scoreText = this.add.text(384, 12, ' 0', {fontSize: '24px', color: 'white'/*, font: 'Roboto-Medium'*/});
 
       //rank display
-      this.rank = this.add.text(580, 12, ' ', {fontSize: '24px', color: 'white'});
+      this.rank = this.add.text(580, 12, ' ', {fontSize: '24px', color: 'white'/*, font: 'Roboto-Medium'*/});
 
       //white border around the game area
       this.add.image(0, 0, 'screenBorder').setOrigin(0, 0).setScale(1); 
