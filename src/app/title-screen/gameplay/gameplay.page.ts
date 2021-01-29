@@ -59,7 +59,7 @@ export class GameplayPage implements OnInit {
       
       setTimeout(() => {
         this.dataService.gameInstance.scene.pause('GameScene', this.popupService);
-      }, 5000); 
+      }, 4000); 
       
       this.popupService.popover('instructions');  
     } else {
