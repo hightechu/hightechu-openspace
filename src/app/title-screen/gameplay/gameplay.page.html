@@ -1,0 +1,32 @@
+<ion-content id="content">
+ <div id="cover" *ngIf="this.popupService.instructions != false"></div> 
+  <div id="phaser">
+  </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="8">
+        <ion-title color="dark">Colour themes:</ion-title>
+      </ion-col>
+    </ion-row>
+      <ion-row>
+        <ion-col size="2">
+          <ion-button class="colorButton" color="none" style="background: #A2BDD8" (click)="popupService.colorChanged('#A2BDD8')"></ion-button>
+        </ion-col>
+        <ion-col size="2">
+          <ion-button class="colorButton" color="none" style="background: #dfca86" (click)="popupService.colorChanged('#dfca86')"></ion-button>
+        </ion-col>
+        <ion-col size="2">
+          <ion-button class="colorButton" color="none" style="background: #D5AAA4" (click)="popupService.colorChanged('#D5AAA4')"></ion-button>
+        </ion-col>
+        <ion-col size="2">
+          <ion-button class="colorButton" color="none" style="background: #9ebd6f" (click)="popupService.colorChanged('#9ebd6f')"></ion-button>
+        </ion-col>
+        <ion-col size="4">
+          <ion-button color="theme" (click)="pause()">
+            <ion-icon name="pause" size="large"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+  </ion-grid>
+</ion-content>

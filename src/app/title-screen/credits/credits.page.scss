@@ -1,0 +1,47 @@
+ion-content {
+    --background: var(--ion-color-theme);
+    text-align: center;
+    font-family: 'Roboto-Medium';
+    text-decoration: none;
+}
+
+ion-button {
+    font-family: 'Roboto-Bold';
+    width: 200px;
+    height: 50px;
+    border:var(--ion-color-dark) 4px solid;
+    --color: var(--ion-color-dark);
+    --background: var(--ion-color-theme);
+    --border-radius: 0px;
+    --background-activated: var(--ion-color-dark);
+}
+
+.back {
+    float: left; 
+}
+
+ion-title {
+    font-size: 30px; 
+}
+
+.subtitle {
+    font-size: 20px;
+    font-family: 'Roboto-Bold';  
+}
+
+.pageTitle {
+    font-family: 'Roboto-Bold'; 
+}
+
+a {
+    color: var(--ion-color-dark); 
+    font-style: italic;
+}
+
+ion-item {
+    display: block; 
+}
+ion-text {
+    display: block;
+    margin: 10px; 
+}

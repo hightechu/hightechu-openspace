@@ -1,0 +1,36 @@
+ion-content {
+    --background: var(--ion-color-theme);
+}
+
+
+ion-button {
+    font-family: 'Roboto-Bold';
+    width: 200px;
+    height: 50px;
+    border:var(--ion-color-dark) 4px solid;
+    --color: var(--ion-color-dark);
+    --background: var(--ion-color-theme);
+    --border-radius: 0px;
+    --background-activated: var(--ion-color-dark);
+}
+
+ion-img {
+    max-width: 70vw;
+    margin-top: 20vh;
+    margin-left: 14vw;
+}
+
+ion-grid {
+    --ion-grid-width: 100%;
+    //border: #00ff00 4px solid;
+}
+
+ion-col {
+    text-align: center;
+    //border: #ffff00 4px solid;
+}
+
+ion-row {
+    //border: #00ffff 4px solid;
+}
+

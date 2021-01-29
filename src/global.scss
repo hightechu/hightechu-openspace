@@ -24,3 +24,28 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+// project fonts
+@font-face {   
+  font-family: 'Roboto-Bold';
+  src: url('./assets/fonts/Roboto-Bold.ttf');
+}
+@font-face {   
+  font-family: 'Roboto-Medium';
+  src: url('./assets/fonts/Roboto-Medium.ttf');
+}
+
+.my-custom-popup .popover-content {
+    --background: var(--ion-color-theme);
+    width: 50%; 
+    top: 100px;
+    border-radius: 0px; 
+    border: 4px var(--ion-color-dark) solid; 
+    color: var(--ion-color-dark); 
+    
+    ion-backdrop {
+      --backdrop-opacity: 0.6 !important;
+      --background: rgba(0, 0, 0, 0.6); 
+    }
+  
+  }

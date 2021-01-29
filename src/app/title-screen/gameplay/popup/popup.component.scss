@@ -1,0 +1,15 @@
+ion-col {
+    font-family: 'Roboto-Bold';
+    text-align: center;
+}
+
+ion-button {
+    font-family: 'Roboto-Bold';
+    width: 300px;
+    height: 50px;
+    border: var(--ion-color-dark) 4px solid;
+    --color: var(--ion-color-dark);
+    --background: var(--ion-color-theme);
+    --border-radius: 0px;
+    --background-activated: var(--ion-color-dark);
+}
