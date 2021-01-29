@@ -1,10 +1,12 @@
 ion-content {
     --background: var(--ion-color-theme);
     text-align: center;
-    font-family: 'Roboto-Bold';
+    font-family: 'Roboto-Medium';
+    text-decoration: none;
 }
 
 ion-button {
+    font-family: 'Roboto-Bold';
     width: 200px;
     height: 50px;
     border:var(--ion-color-dark) 4px solid;
@@ -23,7 +25,12 @@ ion-title {
 }
 
 .subtitle {
-    font-size: 20px; 
+    font-size: 20px;
+    font-family: 'Roboto-Bold';  
+}
+
+.pageTitle {
+    font-family: 'Roboto-Bold'; 
 }
 
 a {

@@ -1,7 +1,7 @@
 ion-content {
     --background: var(--ion-color-theme);
     text-align: center;
-    font-family: 'Roboto-Bold';
+    font-family: 'Roboto-Medium';
 }
 
 .mainButton {
@@ -20,16 +20,8 @@ ion-content {
     box-shadow: #000000;
 }
 
-#pause {
-    position: absolute;
-    top: 50px;
-    right: 26%; 
-}
-
 #phaser {
-    //margin-top: 10vh;
     margin-right: 16vw;
-    //border: #FFFFFF 4px solid;
 }
 
 ion-row {
