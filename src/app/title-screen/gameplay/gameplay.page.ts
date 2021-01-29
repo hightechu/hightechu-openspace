@@ -15,7 +15,7 @@ import { GameDataService } from '../../game-data.service';
 export class GameplayPage implements OnInit {
 
   gameInstance: any;
-  config: Phaser.Types.Core.GameConfig; // phaser configuration object
+  config: any; // phaser configuration object
 
   constructor(public dataService: GameDataService, public popupService: PopupService) {}
 
@@ -44,15 +44,23 @@ export class GameplayPage implements OnInit {
             debug: false
         }
       }, 
-      backgroundColor: `rgb(${this.popupService.r}, ${this.popupService.g}, ${this.popupService.b})` 
+      pixelArt: true,
+      gameTitle: "Open Space", 
+      backgroundColor: `rgb(${this.popupService.r}, ${this.popupService.g}, ${this.popupService.b})`
     }
 
     if (!this.gameInstance) {
+      console.log("game instanciated")
       this.gameInstance = new Phaser.Game(this.config);
       this.dataService.gameInstance = this.gameInstance;
     }
      
     if (this.dataService.game2 == false) {
+      
+      setTimeout(() => {
+        this.dataService.gameInstance.scene.pause('GameScene', this.popupService);
+      }, 5000); 
+      
       this.popupService.popover('instructions');  
     } else {
       this.dataService.gameInstance.scene.start("GameScene", this.popupService); 

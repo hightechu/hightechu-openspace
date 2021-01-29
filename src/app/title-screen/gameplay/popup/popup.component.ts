@@ -20,7 +20,9 @@ export class PopupComponent implements OnInit {
   constructor(public dataService: GameDataService, public popoverService: PopupService) {}
 
   ngOnInit() {
-    this.dataService.gameInstance.scene.pause('GameScene', this.popoverService);
+    if (this.popoverService.instructions == false) {
+      this.dataService.gameInstance.scene.pause('GameScene', this.popoverService);
+    }
 
     if (this.data.title == "Instructions") {
       this.isDisabled = true; 
@@ -32,7 +34,8 @@ export class PopupComponent implements OnInit {
   startGame() {
     this.dataService.gameInstance.scene.start('GameScene', this.popoverService);
     this.closePopup(); 
-    this.popoverService.instructions = false; 
+    this.popoverService.instructions = false;
+    this.dataService.game2 = true;  
   }
 
   //continues the players game from where they left off

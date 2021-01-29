@@ -8,7 +8,7 @@ import Phaser from 'phaser';
 
 export class GameDataService extends Phaser.Scene {
 
-  gameInstance: Phaser.Game;
+  gameInstance: any;
   game2: boolean = false;  
  
   // background and player
@@ -354,8 +354,9 @@ export class GameDataService extends Phaser.Scene {
    */
 
   update(time): void {
+     
 
-      this.cameras.main.setBackgroundColor(`rgb(${this.popoverService.r}, ${this.popoverService.g}, ${this.popoverService.b})`);
+    this.cameras.main.setBackgroundColor(`rgb(${this.popoverService.r}, ${this.popoverService.g}, ${this.popoverService.b})`);
 
 
     // checkpoint popup every 1000 points gained
