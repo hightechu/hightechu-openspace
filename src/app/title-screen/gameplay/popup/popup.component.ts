@@ -26,7 +26,7 @@ export class PopupComponent implements OnInit {
 
     if (this.data.title == "Instructions") {
       this.isDisabled = true; 
-      setTimeout(() => {this.isDisabled = false;}, 1500); 
+      setTimeout(() => {this.isDisabled = false;}, 4000); 
     }
   }
 
