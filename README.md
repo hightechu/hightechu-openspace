@@ -8,7 +8,7 @@
 
 #### Play Open Space Here: [https://openspacegame.herokuapp.com/](https://openspacegame.herokuapp.com/)
 
-### Our Mission
+### 🌎 Our Mission
 
 #### Open Space was designed with stress relief at the forefront of our minds. Open Space is an environment where you can feel free of anxiety, and just take a few minutes to relax from the stresses of daily life. We researched various techniques at reducing stress and implemented as many as we could into our game. The research can be found [here](https://openspacegame.herokuapp.com/title-screen/credits) 
 
@@ -19,16 +19,14 @@
 4. Navigate to the local repository you downloaded and run `npm i` in the command line
 5. Now run `ionic serve` in the command line and after a minute or so your local server should automatically launch in your default browser. 
 
-
-### Contributing
+### 📤 Contributing
 
 There are two main ways in which you can participate in the project:
 
 * [Submit bugs and feature requests](https://github.com/hightechu/hightechu-openspace/issues)
 * Contribute to the code base through [source code changes](https://github.com/hightechu/hightechu-openspace/pulls)
 
-Learn more in our [Contributing]() Document
-
+Learn more in our [Contributing](https://github.com/hightechu/hightechu-openspace/blob/development/CONTRIBUTING.md) Document
 
 ### 📜 Code of Conduct
 
@@ -47,7 +45,7 @@ If you believe someone is violating the code of conduct we ask that you report i
 We are always looking to improve so your feedback is appreciated. Here are some ways you can give your feedback. 
 
 * [File an issue](https://github.com/hightechu/hightechu-openspace/issues)
-* [Request a new feature](CONTRIBUTING.md)
+* [Request a new feature](https://github.com/hightechu/hightechu-openspace/issues)
 
 ### 📢 Communication 
 
